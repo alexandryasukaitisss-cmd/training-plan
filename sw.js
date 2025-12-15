@@ -18,7 +18,7 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("fetch", (e) => {
   const req = e.request;
 
-  // HTML (открытие приложения) — network-first, чтобы обновления приходили
+  // HTML: network-first, чтобы обновления приходили
   if (req.mode === "navigate") {
     e.respondWith((async () => {
       try {
@@ -33,6 +33,6 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // остальное — cache-first
+  // остальное: cache-first
   e.respondWith(caches.match(req).then(cached => cached || fetch(req)));
 });
