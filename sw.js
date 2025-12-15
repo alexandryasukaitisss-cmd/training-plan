@@ -1,4 +1,4 @@
-const CACHE = "training-pwa-v2"; // <-- обновили версию
+const CACHE = "training-pwa-v4";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./sw.js"];
 
 self.addEventListener("install", (e) => {
@@ -16,7 +16,23 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    caches.match(e.request).then((cached) => cached || fetch(e.request))
-  );
+  const req = e.request;
+
+  // HTML (открытие приложения) — network-first, чтобы обновления приходили
+  if (req.mode === "navigate") {
+    e.respondWith((async () => {
+      try {
+        const fresh = await fetch(req);
+        const cache = await caches.open(CACHE);
+        cache.put("./index.html", fresh.clone());
+        return fresh;
+      } catch {
+        return (await caches.match("./index.html")) || (await caches.match("./"));
+      }
+    })());
+    return;
+  }
+
+  // остальное — cache-first
+  e.respondWith(caches.match(req).then(cached => cached || fetch(req)));
 });
