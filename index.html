@@ -6,327 +6,753 @@
   <meta name="theme-color" content="#0b0b0c" />
   <title>Тренировки</title>
 
-  <!-- PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
   <style>
     :root{
-      --bg: #0b0b0c;
-      --card: #151517;
-      --card2:#1c1c1f;
-      --txt: #f3f3f4;
-      --muted:#a7a7ad;
-      --line:#2b2b31;
+      --bg0:#0b0b0c;
+      --bg1:#111114;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.04);
+      --border: rgba(255,255,255,.10);
+      --txt:#f3f3f4;
+      --muted: rgba(255,255,255,.65);
+      --muted2: rgba(255,255,255,.45);
+
       --ok:#34c759;
       --warn:#ff9f0a;
-      --tap: 52px;
+      --bad:#ff3b30;
+
       --r: 16px;
+      --tap: 52px;
     }
+
     @media (prefers-color-scheme: light){
       :root{
-        --bg:#f2f2f7; --card:#ffffff; --card2:#f6f6fb; --txt:#111114;
-        --muted:#5a5a63; --line:#e3e3ea;
+        --bg0:#f3f4f7;
+        --bg1:#ffffff;
+        --card: rgba(255,255,255,.75);
+        --card2: rgba(255,255,255,.55);
+        --border: rgba(0,0,0,.08);
+        --txt:#111114;
+        --muted: rgba(0,0,0,.62);
+        --muted2: rgba(0,0,0,.45);
       }
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Inter,Arial,sans-serif;
-      background:var(--bg); color:var(--txt);
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display","SF Pro Text", Inter, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--txt);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(52,199,89,.16), transparent 55%),
+        radial-gradient(900px 700px at 85% 25%, rgba(0,122,255,.18), transparent 55%),
+        radial-gradient(900px 700px at 50% 95%, rgba(255,159,10,.14), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .wrap{max-width:920px; margin:0 auto; padding:16px 14px 28px}
+
+    .wrap{max-width:980px; margin:0 auto; padding:18px 14px 28px}
     header{
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
       padding:6px 2px 14px;
     }
-    .title{
-      display:flex; flex-direction:column; gap:2px;
-    }
-    h1{margin:0; font-size:20px; font-weight:700; letter-spacing:.2px}
-    .sub{color:var(--muted); font-size:13px}
-    .actions{display:flex; gap:10px; align-items:center}
-    button{
-      height:40px; padding:0 12px; border-radius:12px; border:1px solid var(--line);
-      background:var(--card); color:var(--txt); font-weight:600; cursor:pointer;
-    }
-    button:active{transform:translateY(1px)}
-    .tabs{
-      display:flex; gap:10px; overflow:auto; padding:6px 2px 14px;
-      scrollbar-width:none;
-    }
-    .tabs::-webkit-scrollbar{display:none}
-    .tab{
-      height:40px; padding:0 14px; border-radius:999px; border:1px solid var(--line);
-      background:transparent; color:var(--txt); font-weight:700; white-space:nowrap;
-    }
-    .tab.active{background:var(--card);}
+    h1{margin:0; font-size:22px; font-weight:800; letter-spacing:.2px}
+    .sub{margin-top:6px; color:var(--muted); font-size:13px; line-height:1.35}
 
-    .grid{display:grid; grid-template-columns: 1fr; gap:12px}
-    @media (min-width:860px){
-      .grid{grid-template-columns: 1.2fr .8fr}
+    .topActions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      height:40px; padding:0 12px; border-radius:12px;
+      border:1px solid var(--border);
+      background: var(--card);
+      color:var(--txt); font-weight:700; cursor:pointer;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn.ok{border-color: rgba(52,199,89,.35)}
+    .btn.bad{border-color: rgba(255,59,48,.35); color: var(--bad)}
+    .btn.mini{height:34px; border-radius:10px; padding:0 10px; font-weight:800; font-size:12px}
+
+    .grid{
+      display:grid; grid-template-columns: 1fr; gap:12px;
+    }
+    @media (min-width:900px){
+      .grid{grid-template-columns: 1.25fr .75fr}
     }
 
     .card{
-      background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
       padding:14px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.18);
     }
-    .card h2{margin:0 0 10px; font-size:15px}
-    .hint{color:var(--muted); font-size:13px; margin-top:6px; line-height:1.35}
+
+    .rowBetween{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+    .title2{font-size:14px; font-weight:900; margin:0}
+    .mini{font-size:12px; color:var(--muted)}
+    .muted{color:var(--muted)}
+    .muted2{color:var(--muted2)}
+
+    .seg{
+      display:inline-flex; gap:0; border-radius:14px;
+      border:1px solid var(--border);
+      overflow:hidden;
+      background: rgba(0,0,0,.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    @media (prefers-color-scheme: light){
+      .seg{ background: rgba(255,255,255,.55); }
+    }
+    .seg button{
+      height:40px; padding:0 14px;
+      border:0; background:transparent; color:var(--txt);
+      font-weight:900; cursor:pointer;
+    }
+    .seg button.active{
+      background: rgba(255,255,255,.10);
+    }
+    @media (prefers-color-scheme: light){
+      .seg button.active{ background: rgba(0,0,0,.06); }
+    }
+
+    details.week{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card2);
+      padding:10px;
+      margin-top:10px;
+    }
+    details.week summary{
+      list-style:none;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:6px 6px;
+      font-weight:900;
+    }
+    details.week summary::-webkit-details-marker{display:none}
+    .weekMeta{font-weight:800; color:var(--muted); font-size:12px}
 
     .session{
-      background:var(--card2); border:1px solid var(--line); border-radius:14px;
-      padding:12px; margin-bottom:10px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background: var(--card);
+      padding:12px;
+      margin-top:10px;
     }
-    .sessionHead{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-    }
-    .sid{font-weight:800}
+
     .badge{
-      font-size:12px; padding:4px 10px; border-radius:999px; border:1px solid var(--line);
+      font-size:12px; padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
       color:var(--muted);
+      white-space:nowrap;
     }
-    .badge.done{border-color: rgba(52,199,89,.35); color: var(--ok);}
+    .badge.done{border-color: rgba(52,199,89,.35); color: var(--ok); background: rgba(52,199,89,.10);}
+
+    .sessionHead{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      flex-wrap:wrap;
+    }
+    .sid{font-weight:1000; letter-spacing:.2px}
+    .stats{margin-top:3px; font-size:12px; color:var(--muted)}
+    .sessionBtns{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+
     .sets{margin-top:10px; display:flex; flex-direction:column; gap:8px}
     .setRow{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:10px 10px; border-radius:12px; border:1px solid var(--line);
-      background:var(--card);
+      padding:10px; border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.08);
       min-height: var(--tap);
     }
+    @media (prefers-color-scheme: light){
+      .setRow{ background: rgba(255,255,255,.55); }
+    }
     .setLeft{display:flex; flex-direction:column; gap:2px}
-    .mainLine{font-weight:800}
+    .mainLine{font-weight:950}
     .minorLine{font-size:12px; color:var(--muted)}
-    .checks{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .checks{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; align-items:center}
     .chk{
       width:36px; height:36px; border-radius:10px;
-      border:1px solid var(--line); display:grid; place-items:center;
-      cursor:pointer; user-select:none; font-weight:900;
-      background:transparent;
+      border:1px solid var(--border);
+      display:grid; place-items:center;
+      cursor:pointer; user-select:none;
+      font-weight:1000;
+      background: rgba(255,255,255,.02);
     }
-    .chk.on{border-color: rgba(52,199,89,.45); background: rgba(52,199,89,.12); color: var(--ok);}
-    .row2{display:flex; gap:10px; flex-wrap:wrap}
-    .row2 button{height:42px}
-    .danger{border-color: rgba(255,59,48,.35); color: #ff3b30;}
-    .ok{border-color: rgba(52,199,89,.35);}
+    .chk.on{
+      border-color: rgba(52,199,89,.45);
+      background: rgba(52,199,89,.14);
+      color: var(--ok);
+    }
 
     textarea{
-      width:100%; min-height:130px; resize:vertical;
-      background:var(--card2); color:var(--txt);
-      border:1px solid var(--line); border-radius:14px;
-      padding:10px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      width:100%; min-height:140px; resize:vertical;
+      background: var(--card2); color:var(--txt);
+      border:1px solid var(--border); border-radius:14px;
+      padding:10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       font-size:12px;
     }
-    .mini{font-size:12px; color:var(--muted)}
-    a{color:inherit}
   </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="title">
+    <div>
       <h1>Тренировочный план</h1>
-      <div class="sub" id="subtitle">Открывается как приложение, отметки сохраняются на устройстве</div>
+      <div class="sub" id="subtitle">
+        Отметки сохраняются на устройстве. Логика: <b>квадратик = подход</b> (а не повтор).
+      </div>
     </div>
-    <div class="actions">
-      <button id="btnNext" class="ok" title="Открыть следующую не выполненную">Следующая</button>
-      <button id="btnReset" class="danger" title="Сбросить отметки текущего упражнения">Сброс</button>
+    <div class="topActions">
+      <button class="btn ok" id="btnNext">Следующая</button>
+      <button class="btn bad" id="btnResetExercise">Сброс упражнения</button>
     </div>
   </header>
 
-  <div class="tabs" id="tabs"></div>
-
   <div class="grid">
     <div class="card">
-      <h2 id="exTitle">—</h2>
-      <div id="sessions"></div>
-      <div class="hint">
-        Логика отметок: каждый “квадратик” = один подход. Отмечаешь — прогресс сохраняется в памяти браузера (localStorage).
+      <div class="rowBetween">
+        <div>
+          <div class="mini">Группа</div>
+          <div class="seg" id="groupSeg"></div>
+        </div>
+        <div>
+          <div class="mini">Упражнение</div>
+          <div class="seg" id="exerciseSeg"></div>
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <div class="rowBetween">
+        <div>
+          <div class="title2" id="exTitle">—</div>
+          <div class="mini" id="exMeta">—</div>
+        </div>
+        <div class="mini" id="exProgress">—</div>
+      </div>
+
+      <div id="weeks"></div>
+
+      <div class="mini" style="margin-top:10px">
+        Подсказка: в каждой строке веса можно нажать «✓ все», чтобы отметить все подходы этим весом.
       </div>
     </div>
 
     <div class="card">
-      <h2>Данные и перенос</h2>
-      <div class="row2" style="margin-bottom:10px">
-        <button id="btnExport">Экспорт</button>
-        <button id="btnImport">Импорт</button>
-        <button id="btnResetAll" class="danger">Сброс ВСЁ</button>
+      <div class="rowBetween">
+        <div>
+          <div class="title2">Экспорт / импорт</div>
+          <div class="mini">Для переноса отметок на другое устройство (копипаст JSON).</div>
+        </div>
+        <div class="rowBetween" style="gap:8px">
+          <button class="btn mini" id="btnExport">Экспорт</button>
+          <button class="btn mini" id="btnImport">Импорт</button>
+          <button class="btn mini bad" id="btnResetAll">Сброс всё</button>
+        </div>
       </div>
-      <div class="mini">Экспорт/импорт полезны, если хочешь перенести отметки на другое устройство (вручную через копипаст).</div>
       <div style="height:10px"></div>
-      <textarea id="io" placeholder="Тут появится JSON для экспорта / сюда можно вставить JSON для импорта"></textarea>
-      <div class="hint">
-        Чтобы добавить новые упражнения/вкладки: в коде ниже есть объект <b>PLANS</b>. Копируешь структуру “Жим лёжа”, меняешь названия/подходы.
+      <textarea id="io" placeholder="Тут появится JSON (экспорт) / сюда вставьте JSON (импорт)"></textarea>
+
+      <div style="height:12px"></div>
+      <div class="title2">Как это устроено</div>
+      <div class="mini">
+        Прогресс хранится в <b>localStorage</b> вашего устройства. Код открыт (GitHub Pages), но ваши отметки “выполнено” не публикуются.
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  // ====== 1) ПЛАНЫ (редактируй здесь) ======
-  // формат: { "Упражнение": [ {id:"1.1", sets:[{w:60, r:3, n:1}, ...]} ] }
-  const PLANS = {
-    "Жим лёжа": [
-      { id:"1.1", sets:[ {w:60, r:3, n:1}, {w:70, r:2, n:2}, {w:77.5, r:1, n:2} ] },
-      { id:"1.2", sets:[ {w:60, r:3, n:1}, {w:70, r:3, n:5} ] },
-      { id:"1.3", sets:[ {w:60, r:3, n:1}, {w:75, r:3, n:4} ] },
+/* =========================
+   0) УТИЛИТЫ
+========================= */
+const STORE_KEY = "training_pwa_v2";
 
-      { id:"2.1", sets:[ {w:55, r:4, n:1}, {w:67.5, r:3, n:3}, {w:77.5, r:2, n:3} ] },
-      { id:"2.2", sets:[ {w:67.5, r:3, n:3}, {w:77.5, r:2, n:3} ] },
-      { id:"2.3", sets:[ {w:67.5, r:3, n:1}, {w:77.5, r:2, n:2}, {w:87.5, r:1, n:2} ] },
+function todayISO(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const da = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${da}`;
+}
+function roundTo(x, inc){
+  return Math.round(x / inc) * inc;
+}
+function fmtWeight(w){
+  if (Number.isInteger(w)) return String(w);
+  return String(w).replace(/\.0$/, "");
+}
+function epley1RM(w, reps){
+  return w * (1 + reps/30);
+}
+function keyCheck(ex, sid, blockIdx, setIdx){
+  return `${ex}|${sid}|${blockIdx}|${setIdx}`;
+}
+function keySession(ex, sid){
+  return `${ex}|${sid}`;
+}
+function parseSid(sid){
+  const [w, d] = String(sid).split(".");
+  return { week: Number(w), day: Number(d) };
+}
 
-      { id:"3.1", sets:[ {w:52.5, r:5, n:1}, {w:62.5, r:4, n:4} ] },
-      { id:"3.2", sets:[ {w:62.5, r:5, n:3} ] },
-      { id:"3.3", sets:[ {w:62.5, r:5, n:1}, {w:72.5, r:5, n:5} ] },
+/* =========================
+   1) ПЛАНЫ
+   - Жим лёжа: ваш исходный план
+   - Остальные: генерируются по максимумам “по тому же принципу”
+========================= */
+const BENCH_1RM = 90;
 
-      { id:"4.1", sets:[ {w:52.5, r:5, n:5} ] },
-      { id:"4.2", sets:[ {w:70, r:4, n:4} ] },
-      { id:"4.3", sets:[ {w:70, r:4, n:3}, {w:80, r:3, n:3} ] },
-    ],
+const BENCH_PLAN = [
+  { id:"1.1", sets:[ {w:60, r:3, n:1}, {w:70, r:2, n:2}, {w:77.5, r:1, n:2} ] },
+  { id:"1.2", sets:[ {w:60, r:3, n:1}, {w:70, r:3, n:5} ] },
+  { id:"1.3", sets:[ {w:60, r:3, n:1}, {w:75, r:3, n:4} ] },
 
-    // Пример вкладки под другое упражнение — можешь заполнить позже
-    "Присед": [
-      { id:"—", sets:[ {w:0, r:0, n:0} ] }
-    ],
-    "Тяга": [
-      { id:"—", sets:[ {w:0, r:0, n:0} ] }
-    ]
+  { id:"2.1", sets:[ {w:55, r:4, n:1}, {w:67.5, r:3, n:3}, {w:77.5, r:2, n:3} ] },
+  { id:"2.2", sets:[ {w:67.5, r:3, n:3}, {w:77.5, r:2, n:3} ] },
+  { id:"2.3", sets:[ {w:67.5, r:3, n:1}, {w:77.5, r:2, n:2}, {w:87.5, r:1, n:2} ] },
+
+  { id:"3.1", sets:[ {w:52.5, r:5, n:1}, {w:62.5, r:4, n:4} ] },
+  { id:"3.2", sets:[ {w:62.5, r:5, n:3} ] },
+  { id:"3.3", sets:[ {w:62.5, r:5, n:1}, {w:72.5, r:5, n:5} ] },
+
+  { id:"4.1", sets:[ {w:52.5, r:5, n:5} ] },
+  { id:"4.2", sets:[ {w:70, r:4, n:4} ] },
+  { id:"4.3", sets:[ {w:70, r:4, n:3}, {w:80, r:3, n:3} ] },
+];
+
+function makeGeneratedPlan({maxW, maxReps, inc, kind}){
+  const oneRM = (maxReps === 1) ? maxW : epley1RM(maxW, maxReps);
+  const TM = oneRM * 0.90;
+
+  // 12 тренировок (4 недели × 3)
+  // arms: волнообразно — “плотнее” к 2.3, потом объём/разгрузка, затем снова умеренно тяжело
+  // leg_press: больше повторений, но 2.3 и 4.3 чуть тяжелее
+  // leg_iso: ещё больше повторений, тяжелых “на 1-3” нет
+  const templates = {
+    arms: {
+      "1.1":[ [0.50,12,1],[0.65,10,3] ],
+      "1.2":[ [0.50,12,1],[0.70, 8,4] ],
+      "1.3":[ [0.50,12,1],[0.75, 6,4] ],
+
+      "2.1":[ [0.50,12,1],[0.675,10,3] ],
+      "2.2":[ [0.50,12,1],[0.725, 8,4] ],
+      "2.3":[ [0.50,12,1],[0.80, 6,3],[0.85, 4,2] ],
+
+      "3.1":[ [0.45,15,1],[0.60,12,3] ],
+      "3.2":[ [0.45,15,1],[0.65,10,4] ],
+      "3.3":[ [0.45,15,1],[0.70, 8,3] ],
+
+      "4.1":[ [0.45,15,1],[0.60,12,2] ],
+      "4.2":[ [0.50,12,1],[0.75, 6,3] ],
+      "4.3":[ [0.50,12,1],[0.825,5,3] ],
+    },
+    leg_press: {
+      "1.1":[ [0.40,15,1],[0.60,12,3] ],
+      "1.2":[ [0.40,15,1],[0.65,10,4] ],
+      "1.3":[ [0.40,12,1],[0.70, 8,4] ],
+
+      "2.1":[ [0.40,15,1],[0.625,12,3] ],
+      "2.2":[ [0.40,12,1],[0.675,10,4] ],
+      "2.3":[ [0.40,10,1],[0.75, 6,4] ],
+
+      "3.1":[ [0.35,20,1],[0.55,15,3] ],
+      "3.2":[ [0.35,15,1],[0.60,12,4] ],
+      "3.3":[ [0.35,12,1],[0.65,10,3] ],
+
+      "4.1":[ [0.35,20,1],[0.55,15,2] ],
+      "4.2":[ [0.40,12,1],[0.70, 8,3] ],
+      "4.3":[ [0.40,10,1],[0.775,6,3] ],
+    },
+    leg_iso: {
+      "1.1":[ [0.40,20,1],[0.55,15,2] ],
+      "1.2":[ [0.40,20,1],[0.60,12,3] ],
+      "1.3":[ [0.40,15,1],[0.65,10,3] ],
+
+      "2.1":[ [0.40,20,1],[0.575,15,2] ],
+      "2.2":[ [0.40,15,1],[0.625,12,3] ],
+      "2.3":[ [0.40,12,1],[0.70, 8,4] ],
+
+      "3.1":[ [0.35,25,1],[0.50,20,2] ],
+      "3.2":[ [0.35,20,1],[0.55,15,3] ],
+      "3.3":[ [0.35,15,1],[0.60,12,3] ],
+
+      "4.1":[ [0.35,25,1],[0.50,20,1] ],
+      "4.2":[ [0.40,15,1],[0.65,10,3] ],
+      "4.3":[ [0.40,12,1],[0.725,8,3] ],
+    }
   };
 
-  // ====== 2) ХРАНИЛИЩЕ ======
-  const STORE_KEY = "training_pwa_v1";
-  function loadStore(){
-    try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
-    catch { return {}; }
-  }
-  function saveStore(s){ localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
-
-  // структура: store = { activeExercise:"Жим лёжа", checks:{ "Жим лёжа|1.1|0|0": true, ... }, doneAt:{ "Жим лёжа|1.1": "2025-12-14" } }
-  let store = loadStore();
-  if (!store.checks) store.checks = {};
-  if (!store.doneAt) store.doneAt = {};
-  if (!store.activeExercise || !PLANS[store.activeExercise]) store.activeExercise = Object.keys(PLANS)[0];
-
-  // ====== 3) UI ======
-  const $tabs = document.getElementById("tabs");
-  const $sessions = document.getElementById("sessions");
-  const $exTitle = document.getElementById("exTitle");
-  const $io = document.getElementById("io");
-
-  function keyCheck(ex, sid, setIdx, repIdx){
-    return `${ex}|${sid}|${setIdx}|${repIdx}`;
-  }
-  function keySession(ex, sid){
-    return `${ex}|${sid}`;
-  }
-  function fmtWeight(w){
-    if (Number.isInteger(w)) return String(w);
-    return String(w).replace(/\.0$/, "");
-  }
-  function todayISO(){
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    const da = String(d.getDate()).padStart(2,"0");
-    return `${y}-${m}-${da}`;
-  }
-
-  function renderTabs(){
-    $tabs.innerHTML = "";
-    Object.keys(PLANS).forEach(name=>{
-      const b = document.createElement("button");
-      b.className = "tab" + (name === store.activeExercise ? " active" : "");
-      b.textContent = name;
-      b.onclick = ()=>{
-        store.activeExercise = name;
-        saveStore(store);
-        renderAll();
-      };
-      $tabs.appendChild(b);
+  const t = templates[kind];
+  const sessions = Object.keys(t).map(sid=>{
+    const blocks = t[sid].map(([pct, reps, n])=>{
+      let w = roundTo(TM * pct, inc);
+      if (w < inc) w = inc;
+      return { w, r: reps, n };
     });
-  }
+    return { id: sid, sets: blocks };
+  });
 
-  function sessionProgress(ex, sess){
-    const sid = sess.id;
-    let total = 0, done = 0;
-    sess.sets.forEach((s, setIdx)=>{
-      for(let i=0;i<s.n;i++){
-        total++;
-        if (store.checks[keyCheck(ex, sid, setIdx, i)]) done++;
-      }
-    });
-    return { total, done };
-  }
+  return { sessions, meta: { oneRM, TM, maxW, maxReps, inc } };
+}
 
-  function isSessionDone(ex, sess){
-    const p = sessionProgress(ex, sess);
-    return p.total > 0 && p.done === p.total;
-  }
+// Ваши максимумы (как вы написали)
+const MAXES = {
+  triceps: { maxW: 40, maxReps: 6, inc: 2.5 },
+  biceps:  { maxW: 55, maxReps: 6, inc: 2.5 },
+  legpress:{ maxW: 170, maxReps: 4, inc: 5 },
+  legext:  { maxW: 55, maxReps: 6, inc: 2.5 },
+  legcurl: { maxW: 55, maxReps: 6, inc: 2.5 },
+};
 
-  function markSessionDoneIfComplete(ex, sess){
-    const k = keySession(ex, sess.id);
-    if (isSessionDone(ex, sess)) {
-      store.doneAt[k] = store.doneAt[k] || todayISO();
-    } else {
-      delete store.doneAt[k];
+const genTriceps = makeGeneratedPlan({ ...MAXES.triceps, kind:"arms" });
+const genBiceps  = makeGeneratedPlan({ ...MAXES.biceps,  kind:"arms" });
+const genLegPress= makeGeneratedPlan({ ...MAXES.legpress,kind:"leg_press" });
+const genLegExt  = makeGeneratedPlan({ ...MAXES.legext,  kind:"leg_iso" });
+const genLegCurl = makeGeneratedPlan({ ...MAXES.legcurl, kind:"leg_iso" });
+
+const PLANS = {
+  "Грудь": {
+    "Жим лёжа": { sessions: BENCH_PLAN, meta: { oneRM: BENCH_1RM, TM: BENCH_1RM*0.90, maxW: 90, maxReps: 1, inc: 2.5 } }
+  },
+  "Руки": {
+    "Трицепс": genTriceps,
+    "Бицепс (блок)": genBiceps
+  },
+  "Ноги": {
+    "Жим ногами": genLegPress,
+    "Разгибания ног": genLegExt,
+    "Сгибания ног": genLegCurl
+  }
+};
+
+/* =========================
+   2) ХРАНИЛИЩЕ + МИГРАЦИЯ
+========================= */
+function loadStore(){
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveStore(s){
+  localStorage.setItem(STORE_KEY, JSON.stringify(s));
+}
+function findDefault(){
+  const g = Object.keys(PLANS)[0];
+  const e = Object.keys(PLANS[g])[0];
+  return { g, e };
+}
+function findGroupForExercise(exName){
+  for (const g of Object.keys(PLANS)){
+    if (PLANS[g][exName]) return g;
+  }
+  return null;
+}
+function getSession(exName, sid){
+  for (const g of Object.keys(PLANS)){
+    const ex = PLANS[g][exName];
+    if (!ex) continue;
+    return ex.sessions.find(s=>s.id===sid) || null;
+  }
+  return null;
+}
+
+let store = loadStore();
+if (!store.checks) store.checks = {};
+if (!store.doneAt) store.doneAt = {};
+
+// миграция + авто-отметка 1.1–2.3 для жима
+if (!store.schemaVersion || store.schemaVersion < 2){
+  // активные вкладки
+  const prevEx = store.activeExercise;
+  const g = prevEx ? findGroupForExercise(prevEx) : null;
+  const def = findDefault();
+  store.activeGroup = g || def.g;
+  store.activeExercise = (prevEx && g) ? prevEx : def.e;
+
+  // авто-отметка выполненных (только если там нет ни одной отметки)
+  const exName = "Жим лёжа";
+  const completed = ["1.1","1.2","1.3","2.1","2.2","2.3"];
+  completed.forEach(sid=>{
+    const sess = getSession(exName, sid);
+    if (!sess) return;
+
+    const hasAny = Object.keys(store.checks).some(k => k.startsWith(`${exName}|${sid}|`));
+    if (!hasAny){
+      sess.sets.forEach((blk, bIdx)=>{
+        for (let i=0;i<blk.n;i++){
+          store.checks[keyCheck(exName, sid, bIdx, i)] = true;
+        }
+      });
     }
+    store.doneAt[keySession(exName, sid)] = store.doneAt[keySession(exName, sid)] || todayISO();
+  });
+
+  store.schemaVersion = 2;
+  saveStore(store);
+}
+
+// гарантируем валидность активных вкладок
+if (!store.activeGroup || !PLANS[store.activeGroup]){
+  const def = findDefault();
+  store.activeGroup = def.g;
+}
+if (!store.activeExercise || !PLANS[store.activeGroup][store.activeExercise]){
+  store.activeExercise = Object.keys(PLANS[store.activeGroup])[0];
+}
+saveStore(store);
+
+/* =========================
+   3) ПРОГРЕСС И РЕНДЕР
+========================= */
+const $groupSeg = document.getElementById("groupSeg");
+const $exerciseSeg = document.getElementById("exerciseSeg");
+const $weeks = document.getElementById("weeks");
+const $exTitle = document.getElementById("exTitle");
+const $exMeta = document.getElementById("exMeta");
+const $exProgress = document.getElementById("exProgress");
+const $io = document.getElementById("io");
+
+function sessionStats(exName, sess){
+  let sets = 0, reps = 0, tonnage = 0, maxW = 0;
+  sess.sets.forEach((blk, bIdx)=>{
+    sets += blk.n;
+    reps += blk.n * blk.r;
+    tonnage += blk.n * blk.r * blk.w;
+    maxW = Math.max(maxW, blk.w);
+  });
+
+  let doneSets = 0;
+  sess.sets.forEach((blk, bIdx)=>{
+    for (let i=0;i<blk.n;i++){
+      if (store.checks[keyCheck(exName, sess.id, bIdx, i)]) doneSets++;
+    }
+  });
+
+  return { sets, reps, tonnage, maxW, doneSets };
+}
+function isSessionDone(exName, sess){
+  const st = sessionStats(exName, sess);
+  return st.sets > 0 && st.doneSets === st.sets;
+}
+function markSessionDoneDate(exName, sess){
+  const k = keySession(exName, sess.id);
+  if (isSessionDone(exName, sess)){
+    store.doneAt[k] = store.doneAt[k] || todayISO();
+  } else {
+    delete store.doneAt[k];
   }
+}
 
-  function renderSessions(){
-    const ex = store.activeExercise;
-    $exTitle.textContent = ex;
-    $sessions.innerHTML = "";
+function exerciseTotals(exName){
+  const ex = PLANS[store.activeGroup][exName];
+  let total = 0, done = 0;
+  ex.sessions.forEach(s=>{
+    const st = sessionStats(exName, s);
+    total += st.sets;
+    done += st.doneSets;
+  });
+  return { total, done };
+}
 
-    PLANS[ex].forEach((sess)=>{
-      const p = sessionProgress(ex, sess);
-      const done = isSessionDone(ex, sess);
-      const doneDate = store.doneAt[keySession(ex, sess.id)];
+function renderGroupSeg(){
+  $groupSeg.innerHTML = "";
+  Object.keys(PLANS).forEach(g=>{
+    const b = document.createElement("button");
+    b.textContent = g;
+    b.className = (g===store.activeGroup) ? "active" : "";
+    b.onclick = ()=>{
+      store.activeGroup = g;
+      store.activeExercise = Object.keys(PLANS[g])[0];
+      saveStore(store);
+      renderAll();
+    };
+    $groupSeg.appendChild(b);
+  });
+}
+
+function renderExerciseSeg(){
+  $exerciseSeg.innerHTML = "";
+  Object.keys(PLANS[store.activeGroup]).forEach(ex=>{
+    const b = document.createElement("button");
+    b.textContent = ex;
+    b.className = (ex===store.activeExercise) ? "active" : "";
+    b.onclick = ()=>{
+      store.activeExercise = ex;
+      saveStore(store);
+      renderAll();
+    };
+    $exerciseSeg.appendChild(b);
+  });
+}
+
+function renderWeeks(){
+  $weeks.innerHTML = "";
+  const exName = store.activeExercise;
+  const ex = PLANS[store.activeGroup][exName];
+  const meta = ex.meta;
+
+  $exTitle.textContent = exName;
+
+  // метаданные
+  let metaText = "";
+  if (exName === "Жим лёжа"){
+    metaText = `1ПМ: ${meta.maxW} кг • TM≈${fmtWeight(meta.TM)} кг • 4 недели × 3 тренировки`;
+  } else {
+    metaText = `Макс: ${meta.maxW}×${meta.maxReps} • оценка 1ПМ≈${fmtWeight(meta.oneRM)} • TM≈${fmtWeight(meta.TM)} • 4×3`;
+  }
+  $exMeta.textContent = metaText;
+
+  // общий прогресс
+  const tot = exerciseTotals(exName);
+  $exProgress.textContent = `Прогресс: ${tot.done}/${tot.total} подходов`;
+
+  // группировка по неделям
+  const byWeek = new Map();
+  ex.sessions.forEach(s=>{
+    const w = parseSid(s.id).week || 0;
+    if (!byWeek.has(w)) byWeek.set(w, []);
+    byWeek.get(w).push(s);
+  });
+
+  [...byWeek.keys()].sort((a,b)=>a-b).forEach(weekNo=>{
+    const sessions = byWeek.get(weekNo).sort((a,b)=>parseSid(a.id).day-parseSid(b.id).day);
+
+    // прогресс недели
+    let wTotal=0, wDone=0;
+    sessions.forEach(s=>{
+      const st = sessionStats(exName, s);
+      wTotal += st.sets;
+      wDone += st.doneSets;
+    });
+
+    const det = document.createElement("details");
+    det.className = "week";
+    det.open = true;
+
+    const sum = document.createElement("summary");
+    sum.innerHTML = `<div>Неделя ${weekNo}</div><div class="weekMeta">${wDone}/${wTotal} подходов</div>`;
+    det.appendChild(sum);
+
+    sessions.forEach(sess=>{
+      const st = sessionStats(exName, sess);
+      const done = (st.sets>0 && st.doneSets===st.sets);
+      const doneDate = store.doneAt[keySession(exName, sess.id)];
 
       const wrap = document.createElement("div");
       wrap.className = "session";
+      wrap.dataset.sid = sess.id;
 
       const head = document.createElement("div");
       head.className = "sessionHead";
 
       const left = document.createElement("div");
-      left.innerHTML = `<div class="sid">${sess.id}</div>
-                        <div class="mini">${p.done}/${p.total} подходов</div>`;
+      left.innerHTML = `
+        <div class="sid">Тренировка ${parseSid(sess.id).day} <span class="muted2">(${sess.id})</span></div>
+        <div class="stats">${st.doneSets}/${st.sets} подходов • ${st.reps} повторов • тоннаж ${fmtWeight(st.tonnage)} кг</div>
+      `;
+
+      const right = document.createElement("div");
+      right.className = "sessionBtns";
 
       const badge = document.createElement("div");
       badge.className = "badge" + (done ? " done" : "");
-      badge.textContent = done ? `Выполнено${doneDate ? " • " + doneDate : ""}` : "Не выполнено";
+      badge.textContent = done ? `Выполнено${doneDate ? " • "+doneDate : ""}` : "Не выполнено";
+
+      const btnAll = document.createElement("button");
+      btnAll.className = "btn mini ok";
+      btnAll.textContent = "✓ всё";
+      btnAll.onclick = ()=>{
+        sess.sets.forEach((blk,bIdx)=>{
+          for(let i=0;i<blk.n;i++) store.checks[keyCheck(exName, sess.id, bIdx, i)] = true;
+        });
+        markSessionDoneDate(exName, sess);
+        saveStore(store);
+        renderAll();
+      };
+
+      const btnClear = document.createElement("button");
+      btnClear.className = "btn mini bad";
+      btnClear.textContent = "Сброс";
+      btnClear.onclick = ()=>{
+        sess.sets.forEach((blk,bIdx)=>{
+          for(let i=0;i<blk.n;i++) delete store.checks[keyCheck(exName, sess.id, bIdx, i)];
+        });
+        delete store.doneAt[keySession(exName, sess.id)];
+        saveStore(store);
+        renderAll();
+      };
+
+      right.appendChild(badge);
+      right.appendChild(btnAll);
+      right.appendChild(btnClear);
 
       head.appendChild(left);
-      head.appendChild(badge);
+      head.appendChild(right);
 
       const sets = document.createElement("div");
       sets.className = "sets";
 
-      sess.sets.forEach((s, setIdx)=>{
+      sess.sets.forEach((blk, bIdx)=>{
         const row = document.createElement("div");
         row.className = "setRow";
 
         const l = document.createElement("div");
         l.className = "setLeft";
-        l.innerHTML = `<div class="mainLine">${fmtWeight(s.w)} × ${s.r}</div>
-                       <div class="minorLine">${s.n} подход(а/ов)</div>`;
+        l.innerHTML = `
+          <div class="mainLine">${fmtWeight(blk.w)} × ${blk.r}</div>
+          <div class="minorLine">${blk.n} подход(а/ов) • всего ${blk.n*blk.r} повторов</div>
+        `;
 
         const r = document.createElement("div");
         r.className = "checks";
 
-        for(let i=0;i<s.n;i++){
+        // квадраты = ПОДХОДЫ
+        for (let i=0;i<blk.n;i++){
           const c = document.createElement("div");
-          const ck = keyCheck(ex, sess.id, setIdx, i);
+          const ck = keyCheck(exName, sess.id, bIdx, i);
           c.className = "chk" + (store.checks[ck] ? " on" : "");
           c.textContent = store.checks[ck] ? "✓" : (i+1);
           c.onclick = ()=>{
             store.checks[ck] = !store.checks[ck];
-            markSessionDoneIfComplete(ex, sess);
+            markSessionDoneDate(exName, sess);
             saveStore(store);
-            renderSessions(); // достаточно
+            renderAll();
           };
           r.appendChild(c);
         }
+
+        const quick = document.createElement("button");
+        quick.className = "btn mini ok";
+        quick.textContent = "✓ все";
+        quick.onclick = ()=>{
+          // если уже всё отмечено — снять, иначе отметить
+          let allOn = true;
+          for (let i=0;i<blk.n;i++){
+            if (!store.checks[keyCheck(exName, sess.id, bIdx, i)]) { allOn=false; break; }
+          }
+          for (let i=0;i<blk.n;i++){
+            const ck = keyCheck(exName, sess.id, bIdx, i);
+            if (allOn) delete store.checks[ck];
+            else store.checks[ck] = true;
+          }
+          markSessionDoneDate(exName, sess);
+          saveStore(store);
+          renderAll();
+        };
+        r.appendChild(quick);
 
         row.appendChild(l);
         row.appendChild(r);
@@ -335,88 +761,104 @@
 
       wrap.appendChild(head);
       wrap.appendChild(sets);
-      $sessions.appendChild(wrap);
+      det.appendChild(wrap);
     });
+
+    $weeks.appendChild(det);
+  });
+}
+
+function nextIncomplete(){
+  const exName = store.activeExercise;
+  const ex = PLANS[store.activeGroup][exName];
+  for (const s of ex.sessions){
+    if (!isSessionDone(exName, s)) return s.id;
   }
+  return null;
+}
+function scrollToSession(sid){
+  const el = document.querySelector(`.session[data-sid="${sid}"]`);
+  if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+}
 
-  function nextIncomplete(){
-    const ex = store.activeExercise;
-    const list = PLANS[ex];
-    for (const sess of list){
-      if (!isSessionDone(ex, sess)) return sess.id;
-    }
-    return null;
-  }
+function renderAll(){
+  renderGroupSeg();
+  renderExerciseSeg();
+  renderWeeks();
+}
 
-  function scrollToSession(sid){
-    const nodes = [...document.querySelectorAll(".session .sid")];
-    const n = nodes.find(x => x.textContent.trim() === sid);
-    if (n) n.closest(".session").scrollIntoView({behavior:"smooth", block:"start"});
-  }
+/* =========================
+   4) КНОПКИ + I/O
+========================= */
+document.getElementById("btnNext").onclick = ()=>{
+  const sid = nextIncomplete();
+  if (!sid) return alert("В этом упражнении всё отмечено как выполненное.");
+  scrollToSession(sid);
+};
 
-  function renderAll(){
-    renderTabs();
-    renderSessions();
-  }
+document.getElementById("btnResetExercise").onclick = ()=>{
+  const exName = store.activeExercise;
+  if (!confirm(`Сбросить отметки для упражнения "${exName}"?`)) return;
 
-  // ====== 4) КНОПКИ ======
-  document.getElementById("btnNext").onclick = ()=>{
-    const sid = nextIncomplete();
-    if (!sid) return alert("Все сессии в этой вкладке отмечены как выполненные.");
-    scrollToSession(sid);
-  };
-
-  document.getElementById("btnReset").onclick = ()=>{
-    const ex = store.activeExercise;
-    if (!confirm(`Сбросить отметки для упражнения "${ex}"?`)) return;
-
-    Object.keys(store.checks).forEach(k=>{
-      if (k.startsWith(ex + "|")) delete store.checks[k];
-    });
-    Object.keys(store.doneAt).forEach(k=>{
-      if (k.startsWith(ex + "|")) delete store.doneAt[k];
-    });
-    saveStore(store);
-    renderAll();
-  };
-
-  document.getElementById("btnResetAll").onclick = ()=>{
-    if (!confirm("Сбросить ВСЕ отметки и даты по всем упражнениям?")) return;
-    store.checks = {};
-    store.doneAt = {};
-    saveStore(store);
-    renderAll();
-  };
-
-  document.getElementById("btnExport").onclick = ()=>{
-    $io.value = JSON.stringify(store, null, 2);
-  };
-
-  document.getElementById("btnImport").onclick = ()=>{
-    try{
-      const incoming = JSON.parse($io.value || "{}");
-      if (!incoming || typeof incoming !== "object") throw new Error("bad");
-      // минимальная валидация
-      if (!incoming.checks) incoming.checks = {};
-      if (!incoming.doneAt) incoming.doneAt = {};
-      if (!incoming.activeExercise || !PLANS[incoming.activeExercise]) incoming.activeExercise = Object.keys(PLANS)[0];
-      store = incoming;
-      saveStore(store);
-      renderAll();
-      alert("Импорт выполнен.");
-    }catch(e){
-      alert("Не удалось импортировать JSON. Проверь содержимое поля.");
-    }
-  };
-
-  // ====== 5) PWA: регистрация service worker ======
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js").catch(()=>{});
-    });
-  }
-
+  Object.keys(store.checks).forEach(k=>{
+    if (k.startsWith(exName + "|")) delete store.checks[k];
+  });
+  Object.keys(store.doneAt).forEach(k=>{
+    if (k.startsWith(exName + "|")) delete store.doneAt[k];
+  });
+  saveStore(store);
   renderAll();
+};
+
+document.getElementById("btnResetAll").onclick = ()=>{
+  if (!confirm("Сбросить ВСЕ отметки по всем упражнениям?")) return;
+  store.checks = {};
+  store.doneAt = {};
+  saveStore(store);
+  renderAll();
+};
+
+document.getElementById("btnExport").onclick = ()=>{
+  $io.value = JSON.stringify(store, null, 2);
+};
+
+document.getElementById("btnImport").onclick = ()=>{
+  try{
+    const incoming = JSON.parse($io.value || "{}");
+    if (!incoming || typeof incoming !== "object") throw new Error("bad");
+
+    if (!incoming.checks) incoming.checks = {};
+    if (!incoming.doneAt) incoming.doneAt = {};
+    incoming.schemaVersion = 2;
+
+    // валидация вкладок
+    if (!incoming.activeGroup || !PLANS[incoming.activeGroup]){
+      const def = findDefault();
+      incoming.activeGroup = def.g;
+    }
+    if (!incoming.activeExercise || !PLANS[incoming.activeGroup][incoming.activeExercise]){
+      incoming.activeExercise = Object.keys(PLANS[incoming.activeGroup])[0];
+    }
+
+    store = incoming;
+    saveStore(store);
+    renderAll();
+    alert("Импорт выполнен.");
+  }catch(e){
+    alert("Не удалось импортировать JSON. Проверьте содержимое поля.");
+  }
+};
+
+/* =========================
+   5) PWA: service worker
+========================= */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  });
+}
+
+renderAll();
 </script>
 </body>
 </html>
