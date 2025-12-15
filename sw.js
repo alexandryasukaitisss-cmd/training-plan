@@ -1,4 +1,4 @@
-const CACHE = "training-pwa-v4";
+const CACHE = "training-pwa-v5";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./sw.js"];
 
 self.addEventListener("install", (e) => {
@@ -15,10 +15,11 @@ self.addEventListener("activate", (e) => {
   self.clients.claim();
 });
 
+// HTML (navigate) — network-first, чтобы подтягивались изменения.
+// Остальное — cache-first.
 self.addEventListener("fetch", (e) => {
   const req = e.request;
 
-  // HTML: network-first, чтобы обновления приходили
   if (req.mode === "navigate") {
     e.respondWith((async () => {
       try {
@@ -33,6 +34,5 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // остальное: cache-first
   e.respondWith(caches.match(req).then(cached => cached || fetch(req)));
 });
