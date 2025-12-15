@@ -199,4 +199,716 @@
     textarea{
       width:100%; min-height:140px; resize:vertical;
       background: var(--card2); color:var(--txt);
-      border:1px solid var(--border
+      border:1px solid var(--border); border-radius:14px;
+      padding:10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
+    }
+
+    /* ===== iPhone / узкие экраны: чтобы отметки и кнопки не ломали ширину ===== */
+    @media (max-width: 430px){
+
+      /* строка веса: делаем 2 ряда (текст сверху, отметки снизу) */
+      .setRow{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .checks{
+        justify-content: flex-start;
+        gap: 6px;
+      }
+
+      /* квадратики подходов компактнее */
+      .chk{
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        font-size: 12px;
+      }
+
+      /* в шапке тренировки (бейдж + кнопки) не ужимаем в одну строку */
+      .sessionHead{
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .sessionBtns{
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      /* компактная кнопка "✓ все" на мобильном (показываем только ✓) */
+      .quickBtn{
+        width: 42px;
+        min-width: 42px;
+        padding: 0;
+        position: relative;
+        color: transparent !important;
+      }
+      .quickBtn::after{
+        content: "✓";
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        color: var(--txt);
+        font-weight: 1000;
+        font-size: 14px;
+      }
+
+      .btn.mini{
+        height: 32px;
+        border-radius: 10px;
+        padding: 0 9px;
+        font-size: 11px;
+      }
+      .seg button{
+        height: 36px;
+        padding: 0 10px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Тренировочный план</h1>
+      <div class="sub" id="subtitle">
+        Отметки сохраняются на устройстве. Логика: <b>квадратик = подход</b> (а не повтор).
+      </div>
+    </div>
+    <div class="topActions">
+      <button class="btn ok" id="btnNext">Следующая</button>
+      <button class="btn bad" id="btnResetExercise">Сброс упражнения</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <div class="rowBetween">
+        <div>
+          <div class="mini">Группа</div>
+          <div class="seg" id="groupSeg"></div>
+        </div>
+        <div>
+          <div class="mini">Упражнение</div>
+          <div class="seg" id="exerciseSeg"></div>
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <div class="rowBetween">
+        <div>
+          <div class="title2" id="exTitle">—</div>
+          <div class="mini" id="exMeta">—</div>
+        </div>
+        <div class="mini" id="exProgress">—</div>
+      </div>
+
+      <div id="weeks"></div>
+
+      <div class="mini" style="margin-top:10px">
+        Подсказка: в каждой строке веса можно нажать «✓ все», чтобы отметить все подходы этим весом.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="rowBetween">
+        <div>
+          <div class="title2">Экспорт / импорт</div>
+          <div class="mini">Для переноса отметок на другое устройство (копипаст JSON).</div>
+        </div>
+        <div class="rowBetween" style="gap:8px">
+          <button class="btn mini" id="btnExport">Экспорт</button>
+          <button class="btn mini" id="btnImport">Импорт</button>
+          <button class="btn mini bad" id="btnResetAll">Сброс всё</button>
+        </div>
+      </div>
+      <div style="height:10px"></div>
+      <textarea id="io" placeholder="Тут появится JSON (экспорт) / сюда вставьте JSON (импорт)"></textarea>
+
+      <div style="height:12px"></div>
+      <div class="title2">Как это устроено</div>
+      <div class="mini">
+        Прогресс хранится в <b>localStorage</b> вашего устройства. Код открыт (GitHub Pages), но ваши отметки “выполнено” не публикуются.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================
+   0) УТИЛИТЫ
+========================= */
+const STORE_KEY = "training_pwa_v2";
+
+function todayISO(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const da = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${da}`;
+}
+function roundTo(x, inc){
+  return Math.round(x / inc) * inc;
+}
+function fmtWeight(w){
+  if (Number.isInteger(w)) return String(w);
+  return String(w).replace(/\.0$/, "");
+}
+function epley1RM(w, reps){
+  return w * (1 + reps/30);
+}
+function keyCheck(ex, sid, blockIdx, setIdx){
+  return `${ex}|${sid}|${blockIdx}|${setIdx}`;
+}
+function keySession(ex, sid){
+  return `${ex}|${sid}`;
+}
+function parseSid(sid){
+  const [w, d] = String(sid).split(".");
+  return { week: Number(w), day: Number(d) };
+}
+
+/* =========================
+   1) ПЛАНЫ
+   - Жим лёжа: ваш исходный план
+   - Остальные: генерируются по максимумам “по тому же принципу”
+========================= */
+const BENCH_1RM = 90;
+
+const BENCH_PLAN = [
+  { id:"1.1", sets:[ {w:60, r:3, n:1}, {w:70, r:2, n:2}, {w:77.5, r:1, n:2} ] },
+  { id:"1.2", sets:[ {w:60, r:3, n:1}, {w:70, r:3, n:5} ] },
+  { id:"1.3", sets:[ {w:60, r:3, n:1}, {w:75, r:3, n:4} ] },
+
+  { id:"2.1", sets:[ {w:55, r:4, n:1}, {w:67.5, r:3, n:3}, {w:77.5, r:2, n:3} ] },
+  { id:"2.2", sets:[ {w:67.5, r:3, n:3}, {w:77.5, r:2, n:3} ] },
+  { id:"2.3", sets:[ {w:67.5, r:3, n:1}, {w:77.5, r:2, n:2}, {w:87.5, r:1, n:2} ] },
+
+  { id:"3.1", sets:[ {w:52.5, r:5, n:1}, {w:62.5, r:4, n:4} ] },
+  { id:"3.2", sets:[ {w:62.5, r:5, n:3} ] },
+  { id:"3.3", sets:[ {w:62.5, r:5, n:1}, {w:72.5, r:5, n:5} ] },
+
+  { id:"4.1", sets:[ {w:52.5, r:5, n:5} ] },
+  { id:"4.2", sets:[ {w:70, r:4, n:4} ] },
+  { id:"4.3", sets:[ {w:70, r:4, n:3}, {w:80, r:3, n:3} ] },
+];
+
+function makeGeneratedPlan({maxW, maxReps, inc, kind}){
+  const oneRM = (maxReps === 1) ? maxW : epley1RM(maxW, maxReps);
+  const TM = oneRM * 0.90;
+
+  const templates = {
+    arms: {
+      "1.1":[ [0.50,12,1],[0.65,10,3] ],
+      "1.2":[ [0.50,12,1],[0.70, 8,4] ],
+      "1.3":[ [0.50,12,1],[0.75, 6,4] ],
+
+      "2.1":[ [0.50,12,1],[0.675,10,3] ],
+      "2.2":[ [0.50,12,1],[0.725, 8,4] ],
+      "2.3":[ [0.50,12,1],[0.80, 6,3],[0.85, 4,2] ],
+
+      "3.1":[ [0.45,15,1],[0.60,12,3] ],
+      "3.2":[ [0.45,15,1],[0.65,10,4] ],
+      "3.3":[ [0.45,15,1],[0.70, 8,3] ],
+
+      "4.1":[ [0.45,15,1],[0.60,12,2] ],
+      "4.2":[ [0.50,12,1],[0.75, 6,3] ],
+      "4.3":[ [0.50,12,1],[0.825,5,3] ],
+    },
+    leg_press: {
+      "1.1":[ [0.40,15,1],[0.60,12,3] ],
+      "1.2":[ [0.40,15,1],[0.65,10,4] ],
+      "1.3":[ [0.40,12,1],[0.70, 8,4] ],
+
+      "2.1":[ [0.40,15,1],[0.625,12,3] ],
+      "2.2":[ [0.40,12,1],[0.675,10,4] ],
+      "2.3":[ [0.40,10,1],[0.75, 6,4] ],
+
+      "3.1":[ [0.35,20,1],[0.55,15,3] ],
+      "3.2":[ [0.35,15,1],[0.60,12,4] ],
+      "3.3":[ [0.35,12,1],[0.65,10,3] ],
+
+      "4.1":[ [0.35,20,1],[0.55,15,2] ],
+      "4.2":[ [0.40,12,1],[0.70, 8,3] ],
+      "4.3":[ [0.40,10,1],[0.775,6,3] ],
+    },
+    leg_iso: {
+      "1.1":[ [0.40,20,1],[0.55,15,2] ],
+      "1.2":[ [0.40,20,1],[0.60,12,3] ],
+      "1.3":[ [0.40,15,1],[0.65,10,3] ],
+
+      "2.1":[ [0.40,20,1],[0.575,15,2] ],
+      "2.2":[ [0.40,15,1],[0.625,12,3] ],
+      "2.3":[ [0.40,12,1],[0.70, 8,4] ],
+
+      "3.1":[ [0.35,25,1],[0.50,20,2] ],
+      "3.2":[ [0.35,20,1],[0.55,15,3] ],
+      "3.3":[ [0.35,15,1],[0.60,12,3] ],
+
+      "4.1":[ [0.35,25,1],[0.50,20,1] ],
+      "4.2":[ [0.40,15,1],[0.65,10,3] ],
+      "4.3":[ [0.40,12,1],[0.725,8,3] ],
+    }
+  };
+
+  const t = templates[kind];
+  const sessions = Object.keys(t).map(sid=>{
+    const blocks = t[sid].map(([pct, reps, n])=>{
+      let w = roundTo(TM * pct, inc);
+      if (w < inc) w = inc;
+      return { w, r: reps, n };
+    });
+    return { id: sid, sets: blocks };
+  });
+
+  return { sessions, meta: { oneRM, TM, maxW, maxReps, inc } };
+}
+
+const MAXES = {
+  triceps: { maxW: 40, maxReps: 6, inc: 2.5 },
+  biceps:  { maxW: 55, maxReps: 6, inc: 2.5 },
+  legpress:{ maxW: 170, maxReps: 4, inc: 5 },
+  legext:  { maxW: 55, maxReps: 6, inc: 2.5 },
+  legcurl: { maxW: 55, maxReps: 6, inc: 2.5 },
+};
+
+const genTriceps = makeGeneratedPlan({ ...MAXES.triceps, kind:"arms" });
+const genBiceps  = makeGeneratedPlan({ ...MAXES.biceps,  kind:"arms" });
+const genLegPress= makeGeneratedPlan({ ...MAXES.legpress,kind:"leg_press" });
+const genLegExt  = makeGeneratedPlan({ ...MAXES.legext,  kind:"leg_iso" });
+const genLegCurl = makeGeneratedPlan({ ...MAXES.legcurl, kind:"leg_iso" });
+
+const PLANS = {
+  "Грудь": {
+    "Жим лёжа": { sessions: BENCH_PLAN, meta: { oneRM: BENCH_1RM, TM: BENCH_1RM*0.90, maxW: 90, maxReps: 1, inc: 2.5 } }
+  },
+  "Руки": {
+    "Трицепс": genTriceps,
+    "Бицепс (блок)": genBiceps
+  },
+  "Ноги": {
+    "Жим ногами": genLegPress,
+    "Разгибания ног": genLegExt,
+    "Сгибания ног": genLegCurl
+  }
+};
+
+/* =========================
+   2) ХРАНИЛИЩЕ + МИГРАЦИЯ
+========================= */
+function loadStore(){
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveStore(s){
+  localStorage.setItem(STORE_KEY, JSON.stringify(s));
+}
+function findDefault(){
+  const g = Object.keys(PLANS)[0];
+  const e = Object.keys(PLANS[g])[0];
+  return { g, e };
+}
+function findGroupForExercise(exName){
+  for (const g of Object.keys(PLANS)){
+    if (PLANS[g][exName]) return g;
+  }
+  return null;
+}
+function getSession(exName, sid){
+  for (const g of Object.keys(PLANS)){
+    const ex = PLANS[g][exName];
+    if (!ex) continue;
+    return ex.sessions.find(s=>s.id===sid) || null;
+  }
+  return null;
+}
+
+let store = loadStore();
+if (!store.checks) store.checks = {};
+if (!store.doneAt) store.doneAt = {};
+
+// миграция + авто-отметка 1.1–2.3 для жима
+if (!store.schemaVersion || store.schemaVersion < 2){
+  const prevEx = store.activeExercise;
+  const g = prevEx ? findGroupForExercise(prevEx) : null;
+  const def = findDefault();
+  store.activeGroup = g || def.g;
+  store.activeExercise = (prevEx && g) ? prevEx : def.e;
+
+  const exName = "Жим лёжа";
+  const completed = ["1.1","1.2","1.3","2.1","2.2","2.3"];
+  completed.forEach(sid=>{
+    const sess = getSession(exName, sid);
+    if (!sess) return;
+
+    const hasAny = Object.keys(store.checks).some(k => k.startsWith(`${exName}|${sid}|`));
+    if (!hasAny){
+      sess.sets.forEach((blk, bIdx)=>{
+        for (let i=0;i<blk.n;i++){
+          store.checks[keyCheck(exName, sid, bIdx, i)] = true;
+        }
+      });
+    }
+    store.doneAt[keySession(exName, sid)] = store.doneAt[keySession(exName, sid)] || todayISO();
+  });
+
+  store.schemaVersion = 2;
+  saveStore(store);
+}
+
+if (!store.activeGroup || !PLANS[store.activeGroup]){
+  const def = findDefault();
+  store.activeGroup = def.g;
+}
+if (!store.activeExercise || !PLANS[store.activeGroup][store.activeExercise]){
+  store.activeExercise = Object.keys(PLANS[store.activeGroup])[0];
+}
+saveStore(store);
+
+/* =========================
+   3) ПРОГРЕСС И РЕНДЕР
+========================= */
+const $groupSeg = document.getElementById("groupSeg");
+const $exerciseSeg = document.getElementById("exerciseSeg");
+const $weeks = document.getElementById("weeks");
+const $exTitle = document.getElementById("exTitle");
+const $exMeta = document.getElementById("exMeta");
+const $exProgress = document.getElementById("exProgress");
+const $io = document.getElementById("io");
+
+function sessionStats(exName, sess){
+  let sets = 0, reps = 0, tonnage = 0, maxW = 0;
+  sess.sets.forEach((blk)=>{
+    sets += blk.n;
+    reps += blk.n * blk.r;
+    tonnage += blk.n * blk.r * blk.w;
+    maxW = Math.max(maxW, blk.w);
+  });
+
+  let doneSets = 0;
+  sess.sets.forEach((blk, bIdx)=>{
+    for (let i=0;i<blk.n;i++){
+      if (store.checks[keyCheck(exName, sess.id, bIdx, i)]) doneSets++;
+    }
+  });
+
+  return { sets, reps, tonnage, maxW, doneSets };
+}
+function isSessionDone(exName, sess){
+  const st = sessionStats(exName, sess);
+  return st.sets > 0 && st.doneSets === st.sets;
+}
+function markSessionDoneDate(exName, sess){
+  const k = keySession(exName, sess.id);
+  if (isSessionDone(exName, sess)){
+    store.doneAt[k] = store.doneAt[k] || todayISO();
+  } else {
+    delete store.doneAt[k];
+  }
+}
+
+function exerciseTotals(exName){
+  const ex = PLANS[store.activeGroup][exName];
+  let total = 0, done = 0;
+  ex.sessions.forEach(s=>{
+    const st = sessionStats(exName, s);
+    total += st.sets;
+    done += st.doneSets;
+  });
+  return { total, done };
+}
+
+function renderGroupSeg(){
+  $groupSeg.innerHTML = "";
+  Object.keys(PLANS).forEach(g=>{
+    const b = document.createElement("button");
+    b.textContent = g;
+    b.className = (g===store.activeGroup) ? "active" : "";
+    b.onclick = ()=>{
+      store.activeGroup = g;
+      store.activeExercise = Object.keys(PLANS[g])[0];
+      saveStore(store);
+      renderAll();
+    };
+    $groupSeg.appendChild(b);
+  });
+}
+
+function renderExerciseSeg(){
+  $exerciseSeg.innerHTML = "";
+  Object.keys(PLANS[store.activeGroup]).forEach(ex=>{
+    const b = document.createElement("button");
+    b.textContent = ex;
+    b.className = (ex===store.activeExercise) ? "active" : "";
+    b.onclick = ()=>{
+      store.activeExercise = ex;
+      saveStore(store);
+      renderAll();
+    };
+    $exerciseSeg.appendChild(b);
+  });
+}
+
+function renderWeeks(){
+  $weeks.innerHTML = "";
+  const exName = store.activeExercise;
+  const ex = PLANS[store.activeGroup][exName];
+  const meta = ex.meta;
+
+  $exTitle.textContent = exName;
+
+  let metaText = "";
+  if (exName === "Жим лёжа"){
+    metaText = `1ПМ: ${meta.maxW} кг • TM≈${fmtWeight(meta.TM)} кг • 4 недели × 3 тренировки`;
+  } else {
+    metaText = `Макс: ${meta.maxW}×${meta.maxReps} • оценка 1ПМ≈${fmtWeight(meta.oneRM)} • TM≈${fmtWeight(meta.TM)} • 4×3`;
+  }
+  $exMeta.textContent = metaText;
+
+  const tot = exerciseTotals(exName);
+  $exProgress.textContent = `Прогресс: ${tot.done}/${tot.total} подходов`;
+
+  const byWeek = new Map();
+  ex.sessions.forEach(s=>{
+    const w = parseSid(s.id).week || 0;
+    if (!byWeek.has(w)) byWeek.set(w, []);
+    byWeek.get(w).push(s);
+  });
+
+  [...byWeek.keys()].sort((a,b)=>a-b).forEach(weekNo=>{
+    const sessions = byWeek.get(weekNo).sort((a,b)=>parseSid(a.id).day-parseSid(b.id).day);
+
+    let wTotal=0, wDone=0;
+    sessions.forEach(s=>{
+      const st = sessionStats(exName, s);
+      wTotal += st.sets;
+      wDone += st.doneSets;
+    });
+
+    const det = document.createElement("details");
+    det.className = "week";
+    det.open = true;
+
+    const sum = document.createElement("summary");
+    sum.innerHTML = `<div>Неделя ${weekNo}</div><div class="weekMeta">${wDone}/${wTotal} подходов</div>`;
+    det.appendChild(sum);
+
+    sessions.forEach(sess=>{
+      const st = sessionStats(exName, sess);
+      const done = (st.sets>0 && st.doneSets===st.sets);
+      const doneDate = store.doneAt[keySession(exName, sess.id)];
+
+      const wrap = document.createElement("div");
+      wrap.className = "session";
+      wrap.dataset.sid = sess.id;
+
+      const head = document.createElement("div");
+      head.className = "sessionHead";
+
+      const left = document.createElement("div");
+      left.innerHTML = `
+        <div class="sid">Тренировка ${parseSid(sess.id).day} <span class="muted2">(${sess.id})</span></div>
+        <div class="stats">${st.doneSets}/${st.sets} подходов • ${st.reps} повторов • тоннаж ${fmtWeight(st.tonnage)} кг</div>
+      `;
+
+      const right = document.createElement("div");
+      right.className = "sessionBtns";
+
+      const badge = document.createElement("div");
+      badge.className = "badge" + (done ? " done" : "");
+      badge.textContent = done ? `Выполнено${doneDate ? " • "+doneDate : ""}` : "Не выполнено";
+
+      const btnAll = document.createElement("button");
+      btnAll.className = "btn mini ok quickBtn";
+      btnAll.textContent = "✓ всё";
+      btnAll.onclick = ()=>{
+        sess.sets.forEach((blk,bIdx)=>{
+          for(let i=0;i<blk.n;i++) store.checks[keyCheck(exName, sess.id, bIdx, i)] = true;
+        });
+        markSessionDoneDate(exName, sess);
+        saveStore(store);
+        renderAll();
+      };
+
+      const btnClear = document.createElement("button");
+      btnClear.className = "btn mini bad";
+      btnClear.textContent = "Сброс";
+      btnClear.onclick = ()=>{
+        sess.sets.forEach((blk,bIdx)=>{
+          for(let i=0;i<blk.n;i++) delete store.checks[keyCheck(exName, sess.id, bIdx, i)];
+        });
+        delete store.doneAt[keySession(exName, sess.id)];
+        saveStore(store);
+        renderAll();
+      };
+
+      right.appendChild(badge);
+      right.appendChild(btnAll);
+      right.appendChild(btnClear);
+
+      head.appendChild(left);
+      head.appendChild(right);
+
+      const sets = document.createElement("div");
+      sets.className = "sets";
+
+      sess.sets.forEach((blk, bIdx)=>{
+        const row = document.createElement("div");
+        row.className = "setRow";
+
+        const l = document.createElement("div");
+        l.className = "setLeft";
+        l.innerHTML = `
+          <div class="mainLine">${fmtWeight(blk.w)} × ${blk.r}</div>
+          <div class="minorLine">${blk.n} подход(а/ов) • всего ${blk.n*blk.r} повторов</div>
+        `;
+
+        const r = document.createElement("div");
+        r.className = "checks";
+
+        for (let i=0;i<blk.n;i++){
+          const c = document.createElement("div");
+          const ck = keyCheck(exName, sess.id, bIdx, i);
+          c.className = "chk" + (store.checks[ck] ? " on" : "");
+          c.textContent = store.checks[ck] ? "✓" : (i+1);
+          c.onclick = ()=>{
+            store.checks[ck] = !store.checks[ck];
+            markSessionDoneDate(exName, sess);
+            saveStore(store);
+            renderAll();
+          };
+          r.appendChild(c);
+        }
+
+        const quick = document.createElement("button");
+        quick.className = "btn mini ok quickBtn";
+        quick.textContent = "✓ все";
+        quick.onclick = ()=>{
+          let allOn = true;
+          for (let i=0;i<blk.n;i++){
+            if (!store.checks[keyCheck(exName, sess.id, bIdx, i)]) { allOn=false; break; }
+          }
+          for (let i=0;i<blk.n;i++){
+            const ck = keyCheck(exName, sess.id, bIdx, i);
+            if (allOn) delete store.checks[ck];
+            else store.checks[ck] = true;
+          }
+          markSessionDoneDate(exName, sess);
+          saveStore(store);
+          renderAll();
+        };
+        r.appendChild(quick);
+
+        row.appendChild(l);
+        row.appendChild(r);
+        sets.appendChild(row);
+      });
+
+      wrap.appendChild(head);
+      wrap.appendChild(sets);
+      det.appendChild(wrap);
+    });
+
+    $weeks.appendChild(det);
+  });
+}
+
+function nextIncomplete(){
+  const exName = store.activeExercise;
+  const ex = PLANS[store.activeGroup][exName];
+  for (const s of ex.sessions){
+    if (!isSessionDone(exName, s)) return s.id;
+  }
+  return null;
+}
+function scrollToSession(sid){
+  const el = document.querySelector(`.session[data-sid="${sid}"]`);
+  if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function renderAll(){
+  renderGroupSeg();
+  renderExerciseSeg();
+  renderWeeks();
+}
+
+/* =========================
+   4) КНОПКИ + I/O
+========================= */
+document.getElementById("btnNext").onclick = ()=>{
+  const sid = nextIncomplete();
+  if (!sid) return alert("В этом упражнении всё отмечено как выполненное.");
+  scrollToSession(sid);
+};
+
+document.getElementById("btnResetExercise").onclick = ()=>{
+  const exName = store.activeExercise;
+  if (!confirm(`Сбросить отметки для упражнения "${exName}"?`)) return;
+
+  Object.keys(store.checks).forEach(k=>{
+    if (k.startsWith(exName + "|")) delete store.checks[k];
+  });
+  Object.keys(store.doneAt).forEach(k=>{
+    if (k.startsWith(exName + "|")) delete store.doneAt[k];
+  });
+  saveStore(store);
+  renderAll();
+};
+
+document.getElementById("btnResetAll").onclick = ()=>{
+  if (!confirm("Сбросить ВСЕ отметки по всем упражнениям?")) return;
+  store.checks = {};
+  store.doneAt = {};
+  saveStore(store);
+  renderAll();
+};
+
+document.getElementById("btnExport").onclick = ()=>{
+  $io.value = JSON.stringify(store, null, 2);
+};
+
+document.getElementById("btnImport").onclick = ()=>{
+  try{
+    const incoming = JSON.parse($io.value || "{}");
+    if (!incoming || typeof incoming !== "object") throw new Error("bad");
+
+    if (!incoming.checks) incoming.checks = {};
+    if (!incoming.doneAt) incoming.doneAt = {};
+    incoming.schemaVersion = 2;
+
+    if (!incoming.activeGroup || !PLANS[incoming.activeGroup]){
+      const def = findDefault();
+      incoming.activeGroup = def.g;
+    }
+    if (!incoming.activeExercise || !PLANS[incoming.activeGroup][incoming.activeExercise]){
+      incoming.activeExercise = Object.keys(PLANS[incoming.activeGroup])[0];
+    }
+
+    store = incoming;
+    saveStore(store);
+    renderAll();
+    alert("Импорт выполнен.");
+  }catch(e){
+    alert("Не удалось импортировать JSON. Проверьте содержимое поля.");
+  }
+};
+
+/* =========================
+   5) PWA: service worker
+========================= */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  });
+}
+
+renderAll();
+</script>
+</body>
+</html>
