@@ -423,18 +423,26 @@ function monthLabel(key){
   const mi = Number(m)-1;
   return `${RU_MONTHS[mi]} ${y}`;
 }
-function lastNMonths(n){
+function monthsForwardUntil(endKey){
   const out = [];
   const d = new Date();
   d.setDate(1);
-  for(let i=0;i<n;i++){
+
+  const [endY, endM] = endKey.split("-").map(Number);
+
+  while (true){
     const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    out.push(`${y}-${m}`);
-    d.setMonth(d.getMonth()-1);
+    const m = d.getMonth() + 1;
+
+    const key = `${y}-${String(m).padStart(2,"0")}`;
+    out.push(key);
+
+    if (y > endY || (y === endY && m >= endM)) break;
+    d.setMonth(d.getMonth() + 1);
   }
   return out;
 }
+
 
 /* =========================
    1) МАКСИМУМЫ (ДЕФОЛТЫ)
@@ -727,7 +735,7 @@ function ensureActiveMonthExists(){
 }
 
 function renderMonthSelect(){
-  const options = lastNMonths(18);
+  const options = monthsForwardUntil("2026-12");
   $monthSel.innerHTML = "";
   options.forEach(mk=>{
     const opt = document.createElement("option");
