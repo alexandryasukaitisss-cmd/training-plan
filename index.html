@@ -61,36 +61,53 @@
     header{
       display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
       padding:6px 2px 14px;
+      flex-wrap:wrap;
     }
     h1{margin:0; font-size:22px; font-weight:800; letter-spacing:.2px}
     .sub{margin-top:6px; color:var(--muted); font-size:13px; line-height:1.35}
 
-    .topActions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .topActions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
     .btn{
       height:40px; padding:0 12px; border-radius:12px;
       border:1px solid var(--border);
       background: var(--card);
-      color:var(--txt); font-weight:700; cursor:pointer;
+      color:var(--txt); font-weight:800; cursor:pointer;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
+      white-space:nowrap;
     }
     .btn:active{transform:translateY(1px)}
     .btn.ok{border-color: rgba(52,199,89,.35)}
     .btn.bad{border-color: rgba(255,59,48,.35); color: var(--bad)}
-    .btn.mini{height:34px; border-radius:10px; padding:0 10px; font-weight:800; font-size:12px}
+    .btn.mini{height:34px; border-radius:10px; padding:0 10px; font-weight:900; font-size:12px}
 
-    .sel{
-      height:40px;
-      padding:0 12px;
-      border-radius:12px;
+    .picker{
+      display:inline-flex; align-items:center; gap:10px;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
       border:1px solid var(--border);
       background: var(--card);
-      color:var(--txt);
-      font-weight:800;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      width:max-content;
+      max-width:100%;
+    }
+    .pickerLabel{font-size:12px; color:var(--muted); font-weight:800}
+    select{
       appearance:none;
       -webkit-appearance:none;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.08);
+      color:var(--txt);
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:900;
+      outline:none;
+      max-width: 62vw;
+    }
+    @media (prefers-color-scheme: light){
+      select{ background: rgba(255,255,255,.55); }
     }
 
     .grid{
@@ -123,6 +140,7 @@
       background: rgba(0,0,0,.08);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
+      max-width:100%;
     }
     @media (prefers-color-scheme: light){
       .seg{ background: rgba(255,255,255,.55); }
@@ -131,6 +149,7 @@
       height:40px; padding:0 14px;
       border:0; background:transparent; color:var(--txt);
       font-weight:900; cursor:pointer;
+      white-space:nowrap;
     }
     .seg button.active{
       background: rgba(255,255,255,.10);
@@ -139,12 +158,15 @@
       .seg button.active{ background: rgba(0,0,0,.06); }
     }
 
+    .controlsStack{display:flex; flex-direction:column; gap:10px}
+    .controlsRow{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+
     details.week{
       border:1px solid var(--border);
       border-radius: 14px;
       background: var(--card2);
       padding:10px;
-      margin-top:10px;
+      margin-top:12px;
     }
     details.week summary{
       list-style:none;
@@ -152,9 +174,10 @@
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding:6px 6px;
       font-weight:900;
+      flex-wrap:wrap;
     }
     details.week summary::-webkit-details-marker{display:none}
-    .weekMeta{font-weight:800; color:var(--muted); font-size:12px}
+    .weekMeta{font-weight:800; color:var(--muted); font-size:12px; white-space:nowrap}
 
     .session{
       border:1px solid var(--border);
@@ -164,22 +187,44 @@
       margin-top:10px;
     }
 
+    .sessionHead{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      flex-wrap:wrap;
+    }
+    .sid{font-weight:1000; letter-spacing:.2px}
+    .stats{margin-top:3px; font-size:12px; color:var(--muted); line-height:1.35}
+    .sessionBtns{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+
     .badge{
       font-size:12px; padding:4px 10px;
       border-radius:999px;
       border:1px solid var(--border);
       color:var(--muted);
       white-space:nowrap;
+      max-width:100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
     .badge.done{border-color: rgba(52,199,89,.35); color: var(--ok); background: rgba(52,199,89,.10);}
 
-    .sessionHead{
+    .exCard{
+      margin-top:10px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background: rgba(0,0,0,.06);
+      padding:10px;
+    }
+    @media (prefers-color-scheme: light){
+      .exCard{ background: rgba(255,255,255,.45); }
+    }
+    .exHead{
       display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
       flex-wrap:wrap;
+      padding:2px 2px 8px;
     }
-    .sid{font-weight:1000; letter-spacing:.2px}
-    .stats{margin-top:3px; font-size:12px; color:var(--muted)}
-    .sessionBtns{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .exName{font-weight:1000; font-size:14px}
+    .exMeta{font-size:12px; color:var(--muted); line-height:1.35}
+    .exBtns{display:flex; gap:8px; flex-wrap:wrap}
 
     .sets{margin-top:10px; display:flex; flex-direction:column; gap:8px}
     .setRow{
@@ -192,21 +237,41 @@
     @media (prefers-color-scheme: light){
       .setRow{ background: rgba(255,255,255,.55); }
     }
-    .setLeft{display:flex; flex-direction:column; gap:2px}
+    .setLeft{display:flex; flex-direction:column; gap:2px; min-width: 40%}
     .mainLine{font-weight:950}
-    .minorLine{font-size:12px; color:var(--muted)}
-    .checks{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; align-items:center}
+    .minorLine{font-size:12px; color:var(--muted); line-height:1.25}
+
+    .checks{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+      max-width: 58%;
+    }
+
     .chk{
-      width:36px; height:36px; border-radius:10px;
+      width:34px; height:34px; border-radius:10px;
       border:1px solid var(--border);
       display:grid; place-items:center;
       cursor:pointer; user-select:none;
       font-weight:1000;
       background: rgba(255,255,255,.02);
+      font-size:12px;
+      flex: 0 0 auto;
     }
     .chk.on{
       border-color: rgba(52,199,89,.45);
       background: rgba(52,199,89,.14);
+      color: var(--ok);
+    }
+    .chk.quick{
+      width:auto;
+      min-width:56px;
+      padding:0 10px;
+      font-weight:1000;
+      border-color: rgba(52,199,89,.35);
+      background: rgba(52,199,89,.10);
       color: var(--ok);
     }
 
@@ -219,145 +284,125 @@
       font-size:12px;
     }
 
-    .formGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-    }
-    .field{
-      border:1px solid var(--border);
-      background: var(--card2);
-      border-radius:14px;
-      padding:10px;
-    }
-    .label{font-size:11px; color:var(--muted); font-weight:900; margin-bottom:6px}
-    .inp{
+    .table{
       width:100%;
-      height:38px;
+      border-collapse:separate;
+      border-spacing:0 8px;
+    }
+    .table td{vertical-align:middle}
+    .in{
+      width:100%;
+      height:36px;
       border-radius:12px;
       border:1px solid var(--border);
-      background: rgba(255,255,255,.04);
+      background: rgba(0,0,0,.08);
       color:var(--txt);
       padding:0 10px;
       font-weight:900;
-      font-size:13px;
+      outline:none;
     }
     @media (prefers-color-scheme: light){
-      .inp{ background: rgba(0,0,0,.03); }
+      .in{ background: rgba(255,255,255,.55); }
     }
-    .hint{font-size:11px; color:var(--muted); margin-top:6px; line-height:1.25}
+    .hint{font-size:11px; color:var(--muted2); line-height:1.35}
+    .hr{height:1px; background: var(--border); margin:12px 0}
 
-    /* Узкие экраны (iPhone) */
-    @media (max-width: 430px){
-      .setRow{
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-      }
-      .checks{
-        justify-content: flex-start;
-        gap: 6px;
-      }
-      .chk{
-        width: 30px;
-        height: 30px;
-        border-radius: 9px;
-        font-size: 12px;
-      }
-      .sessionHead{
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .sessionBtns{
-        width: 100%;
-        justify-content: flex-start;
-      }
-      .btn.mini{
-        height: 32px;
-        border-radius: 10px;
-        padding: 0 9px;
-        font-size: 11px;
-      }
-      .seg button{
-        height: 36px;
-        padding: 0 10px;
-        font-size: 13px;
-      }
-      .sel{
-        height: 36px;
-        font-size: 13px;
-      }
-      .formGrid{grid-template-columns: 1fr}
+    /* iPhone узко */
+    @media (max-width:420px){
+      .wrap{padding:16px 12px 26px}
+      h1{font-size:20px}
+      .btn{height:38px}
+      .btn.mini{height:30px; font-size:11px; padding:0 9px}
+      .seg button{height:38px; padding:0 12px}
+      .chk{width:32px; height:32px; border-radius:9px; font-size:11px}
+      .chk.quick{min-width:50px; padding:0 8px}
+      .checks{max-width: 60%}
+    }
+
+    .errorBox{
+      margin-top:12px;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,59,48,.35);
+      background: rgba(255,59,48,.10);
+      color: var(--txt);
+      display:none;
+      white-space:pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
     }
   </style>
 </head>
+
 <body>
 <div class="wrap">
   <header>
     <div>
       <h1>Тренировочный план</h1>
-      <div class="sub" id="subtitle">
-        Отметки сохраняются на устройстве (по месяцам). Логика: <b>квадратик = подход</b>.<br>
-        Структура: <b>День 1</b> (Жим+Руки+Тяга), <b>День 2</b> (Жим+Ноги), <b>День 3</b> (Жим+Руки+Плечи).
+      <div class="sub">
+        Отметки сохраняются на устройстве (localStorage). Логика: <b>квадратик = подход</b>.
+      </div>
+
+      <div class="picker">
+        <div class="pickerLabel">Месяц</div>
+        <select id="monthSel"></select>
       </div>
     </div>
+
     <div class="topActions">
-      <select class="sel" id="monthSel" title="Месяц"></select>
       <button class="btn ok" id="btnNext">Следующая</button>
-      <button class="btn bad" id="btnResetExercise">Сброс упражнения</button>
+      <button class="btn bad" id="btnResetDay">Сброс дня</button>
     </div>
   </header>
 
   <div class="grid">
+    <!-- LEFT -->
     <div class="card">
-      <div class="rowBetween">
-        <div>
-          <div class="mini">Группа</div>
-          <div class="seg" id="groupSeg"></div>
+      <div class="controlsStack">
+        <div class="controlsRow">
+          <div class="mini" style="min-width:64px;font-weight:900">Неделя:</div>
+          <div class="seg" id="weekSeg"></div>
         </div>
-        <div>
-          <div class="mini">Упражнение</div>
-          <div class="seg" id="exerciseSeg"></div>
+
+        <div class="controlsRow">
+          <div class="mini" style="min-width:64px;font-weight:900">День:</div>
+          <div class="seg" id="daySeg"></div>
         </div>
+
+        <div class="mini" id="dayHint">—</div>
       </div>
 
-      <div style="height:10px"></div>
-
-      <div class="rowBetween">
-        <div>
-          <div class="title2" id="exTitle">—</div>
-          <div class="mini" id="exMeta">—</div>
-        </div>
-        <div class="mini" id="exProgress">—</div>
-      </div>
-
+      <div id="errorBox" class="errorBox"></div>
       <div id="weeks"></div>
 
       <div class="mini" style="margin-top:10px">
-        Подсказка: в каждой строке веса можно нажать «✓ все», чтобы отметить все подходы этим весом.
+        Подсказка: в каждой строке веса есть кнопка «все» — она отмечает/снимает все подходы этим весом.
       </div>
     </div>
 
+    <!-- RIGHT -->
     <div class="card">
       <div class="rowBetween">
         <div>
-          <div class="title2">Максимумы на месяц</div>
-          <div class="mini" id="maxHint">Текущий месяц — предустановленные значения. Менять удобно со следующего месяца (просто выберите его сверху).</div>
+          <div class="title2">Максимумы на выбранный месяц</div>
+          <div class="mini">Можно менять со следующего месяца. Если не сохранять — будет “по умолчанию”.</div>
         </div>
         <div class="rowBetween" style="gap:8px">
-          <button class="btn mini" id="btnApplyMax">Применить</button>
+          <button class="btn mini ok" id="btnSaveMax">Сохранить</button>
+          <button class="btn mini bad" id="btnResetMonth">Сброс месяца</button>
         </div>
       </div>
 
-      <div class="formGrid" id="maxForm"></div>
+      <div style="height:8px"></div>
+      <table class="table" id="maxTable"></table>
+      <div class="hint" id="maxHint"></div>
 
-      <div style="height:14px"></div>
+      <div class="hr"></div>
 
       <div class="rowBetween">
         <div>
           <div class="title2">Экспорт / импорт</div>
-          <div class="mini">Перенос данных между устройствами (копипаст JSON).</div>
+          <div class="mini">Для переноса отметок на другое устройство (копипаст JSON).</div>
         </div>
         <div class="rowBetween" style="gap:8px">
           <button class="btn mini" id="btnExport">Экспорт</button>
@@ -370,10 +415,8 @@
       <textarea id="io" placeholder="Тут появится JSON (экспорт) / сюда вставьте JSON (импорт)"></textarea>
 
       <div style="height:12px"></div>
-      <div class="title2">Как это устроено</div>
-      <div class="mini">
-        Прогресс хранится в <b>localStorage</b> (устройства) и разделён по <b>месяцам</b>.
-      </div>
+      <div class="title2">Схема дней (без привязки к Пн/Ср/Пт)</div>
+      <div class="mini" id="daySchemaText"></div>
     </div>
   </div>
 </div>
@@ -382,7 +425,8 @@
 /* =========================
    0) УТИЛИТЫ
 ========================= */
-const STORE_KEY = "training_pwa_v2"; // сохраняем совместимость с вашим текущим хранилищем
+const APP_VERSION = "vA-2025-12-23";
+const STORE_KEY = "training_pwa_vA";
 
 function todayISO(){
   const d = new Date();
@@ -391,38 +435,30 @@ function todayISO(){
   const da = String(d.getDate()).padStart(2,"0");
   return `${y}-${m}-${da}`;
 }
-function currentMonthKey(){
+function monthKeyNow(){
   const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  return `${y}-${m}`;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
 }
 function roundTo(x, inc){
   return Math.round(x / inc) * inc;
 }
 function fmtWeight(w){
-  if (Number.isInteger(w)) return String(w);
-  return String(w).replace(/\.0$/, "");
+  if (!isFinite(w)) return "—";
+  const r = Math.round(w * 10) / 10;
+  if (Number.isInteger(r)) return String(r);
+  return String(r).replace(/\.0$/, "");
 }
 function epley1RM(w, reps){
+  if (!w || !reps) return 0;
+  if (reps <= 1) return w;
   return w * (1 + reps/30);
-}
-function keyCheck(ex, sid, blockIdx, setIdx){
-  return `${ex}|${sid}|${blockIdx}|${setIdx}`;
-}
-function keySession(ex, sid){
-  return `${ex}|${sid}`;
 }
 function parseSid(sid){
   const [w, d] = String(sid).split(".");
   return { week: Number(w), day: Number(d) };
 }
-const RU_MONTHS = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
-function monthLabel(key){
-  const [y,m] = key.split("-");
-  const mi = Number(m)-1;
-  return `${RU_MONTHS[mi]} ${y}`;
-}
+function sidOf(week, day){ return `${week}.${day}`; }
+
 function monthsForwardUntil(endKey){
   const out = [];
   const d = new Date();
@@ -433,7 +469,6 @@ function monthsForwardUntil(endKey){
   while (true){
     const y = d.getFullYear();
     const m = d.getMonth() + 1;
-
     const key = `${y}-${String(m).padStart(2,"0")}`;
     out.push(key);
 
@@ -442,140 +477,39 @@ function monthsForwardUntil(endKey){
   }
   return out;
 }
-
-
-/* =========================
-   1) МАКСИМУМЫ (ДЕФОЛТЫ)
-   Предустановленные значения для текущего месяца
-========================= */
-function defaultMaxes(){
-  return {
-    // Жим — 1ПМ
-    bench1RM: 90,
-
-    // Тренажёры рук: шаг 5 кг
-    triceps: { maxW: 40, maxReps: 6, inc: 5 },
-    biceps:  { maxW: 55, maxReps: 6, inc: 5 },
-
-    // Тяга верхнего блока: шаг 5 кг (макс 1×65)
-    pulldown:{ maxW: 65, maxReps: 1, inc: 5 },
-
-    // Ноги
-    legpress:{ maxW: 170, maxReps: 4, inc: 5 },
-    legext:  { maxW: 55,  maxReps: 6, inc: 2.5 },
-    legadd:  { maxW: 55,  maxReps: 6, inc: 2.5 }, // сведение ног
-
-    // Плечи: жим на плечи (1ПМ 45)
-    // (шаг по умолчанию 2.5 — если у вас шаг 5, можно поменять в коде за 1 строку)
-    shoulder:{ maxW: 45,  maxReps: 1, inc: 2.5 },
-  };
+const RU_MONTHS = ["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"];
+function monthLabel(key){
+  const [y,m] = key.split("-").map(Number);
+  return `${RU_MONTHS[m-1]} ${y}`;
 }
 
 /* =========================
-   2) ХРАНИЛИЩЕ + МИГРАЦИЯ
+   1) УПРАЖНЕНИЯ + ДНИ
 ========================= */
-function loadStore(){
-  try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
-  catch { return {}; }
-}
-function saveStore(s){
-  localStorage.setItem(STORE_KEY, JSON.stringify(s));
-}
+const EX = {
+  bench:     { id:"bench",     name:"Жим лёжа",            inc: 2.5, defaultMax:{w:90,  reps:1},  dayMask:[1,2,3], kind:"bench" },
+  triceps:   { id:"triceps",   name:"Трицепс",             inc: 5,   defaultMax:{w:40,  reps:6},  dayMask:[1,3],   kind:"arms_machine" },
+  biceps:    { id:"biceps",    name:"Бицепс (блок)",       inc: 5,   defaultMax:{w:55,  reps:6},  dayMask:[1,3],   kind:"arms_machine" },
+  pulldown:  { id:"pulldown",  name:"Тяга верхнего блока", inc: 5,   defaultMax:{w:65,  reps:1},  dayMask:[1],     kind:"back_machine" },
+  legpress:  { id:"legpress",  name:"Жим ногами",          inc: 5,   defaultMax:{w:170, reps:4},  dayMask:[2],     kind:"leg_press" },
+  legext:    { id:"legext",    name:"Разгибания ног",      inc: 5,   defaultMax:{w:55,  reps:6},  dayMask:[2],     kind:"leg_iso" },
+  adduction: { id:"adduction", name:"Сведение ног",        inc: 5,   defaultMax:{w:55,  reps:6},  dayMask:[2],     kind:"leg_iso" },
+  shoulder:  { id:"shoulder",  name:"Жим на плечи",        inc: 2.5, defaultMax:{w:45,  reps:1},  dayMask:[3],     kind:"shoulder" },
+};
 
-let store = loadStore();
-if (!store.schemaVersion) store.schemaVersion = 1;
-
-// Миграция старого формата (checks/doneAt без months) -> months (v4)
-if (store.schemaVersion < 4){
-  const mk = store.activeMonth || currentMonthKey();
-  const checks = store.checks || {};
-  const doneAt = store.doneAt || {};
-
-  store.months = store.months || {};
-  store.months[mk] = store.months[mk] || { checks:{}, doneAt:{}, maxes: defaultMaxes() };
-  store.months[mk].checks = checks;
-  store.months[mk].doneAt = doneAt;
-
-  store.activeMonth = mk;
-
-  delete store.checks;
-  delete store.doneAt;
-
-  // вкладки по умолчанию
-  if (!store.activeGroup) store.activeGroup = "Грудь";
-  if (!store.activeExercise) store.activeExercise = "Жим лёжа";
-
-  store.schemaVersion = 4;
-  saveStore(store);
-}
-
-// Миграция названия: "Сгибания ног" -> "Сведение ног" (v5)
-if (store.schemaVersion < 5){
-  const OLD = "Сгибания ног";
-  const NEW = "Сведение ног";
-
-  if (store.months){
-    for (const mk of Object.keys(store.months)){
-      const mo = store.months[mk];
-      if (!mo || !mo.checks || !mo.doneAt) continue;
-
-      const newChecks = {};
-      for (const k of Object.keys(mo.checks)){
-        if (k.startsWith(OLD + "|")) newChecks[NEW + "|" + k.slice((OLD+"|").length)] = mo.checks[k];
-        else newChecks[k] = mo.checks[k];
-      }
-      mo.checks = newChecks;
-
-      const newDone = {};
-      for (const k of Object.keys(mo.doneAt)){
-        if (k.startsWith(OLD + "|")) newDone[NEW + "|" + k.slice((OLD+"|").length)] = mo.doneAt[k];
-        else newDone[k] = mo.doneAt[k];
-      }
-      mo.doneAt = newDone;
-    }
-  }
-
-  if (store.activeExercise === OLD) store.activeExercise = NEW;
-
-  store.schemaVersion = 5;
-  saveStore(store);
-}
-
-// гарантируем структуру
-if (!store.months) store.months = {};
-if (!store.activeMonth) store.activeMonth = currentMonthKey();
-if (!store.months[store.activeMonth]) store.months[store.activeMonth] = { checks:{}, doneAt:{}, maxes: defaultMaxes() };
-if (!store.months[store.activeMonth].maxes) store.months[store.activeMonth].maxes = defaultMaxes();
-
-function monthObj(){
-  if (!store.months[store.activeMonth]){
-    // новый месяц: копируем maxes из ближайшего прошлого, иначе дефолт
-    const keys = Object.keys(store.months).sort().reverse();
-    const prev = keys.find(k => k < store.activeMonth);
-    const base = prev ? store.months[prev].maxes : defaultMaxes();
-    store.months[store.activeMonth] = { checks:{}, doneAt:{}, maxes: JSON.parse(JSON.stringify(base)) };
-  }
-  const mo = store.months[store.activeMonth];
-  if (!mo.checks) mo.checks = {};
-  if (!mo.doneAt) mo.doneAt = {};
-  if (!mo.maxes) mo.maxes = defaultMaxes();
-  return mo;
-}
+const DAY_SCHEMA = {
+  1: { title:"День 1", text:"жим + трицепс + бицепс + тяга верхнего блока", exIds:["bench","triceps","biceps","pulldown"] },
+  2: { title:"День 2", text:"жим + жим ногами + разгибания + сведение",     exIds:["bench","legpress","legext","adduction"] },
+  3: { title:"День 3", text:"жим + трицепс + бицепс + жим на плечи",        exIds:["bench","triceps","biceps","shoulder"] },
+};
 
 /* =========================
-   3) ПЛАНЫ (динамические по maxes месяца)
-   Важное: дни недели НЕ используются.
-   День 1/2/3 — это порядок внутри недели:
-     День 1: Жим + Трицепс + Бицепс + Тяга верхнего блока
-     День 2: Жим + Ноги
-     День 3: Жим + Трицепс + Бицепс + Плечи
+   2) БЕНЧ-ПЛАН В ПРОЦЕНТАХ ОТ TM (исходно 1ПМ=90 → TM=81)
 ========================= */
-
-// База жима: ваш исходный план при 1ПМ=90 (TM=81). Далее масштабируем по 1ПМ месяца.
 const BASE_BENCH_1RM = 90;
-const BASE_BENCH_TM = BASE_BENCH_1RM * 0.90;
+const BASE_BENCH_TM  = BASE_BENCH_1RM * 0.90;
 
-const BENCH_BASE = [
+const BENCH_PLAN_WEIGHTS = [
   { id:"1.1", sets:[ {w:60, r:3, n:1}, {w:70, r:2, n:2}, {w:77.5, r:1, n:2} ] },
   { id:"1.2", sets:[ {w:60, r:3, n:1}, {w:70, r:3, n:5} ] },
   { id:"1.3", sets:[ {w:60, r:3, n:1}, {w:75, r:3, n:4} ] },
@@ -593,458 +527,619 @@ const BENCH_BASE = [
   { id:"4.3", sets:[ {w:70, r:4, n:3}, {w:80, r:3, n:3} ] },
 ];
 
-function buildBenchPlan(oneRM){
-  const TM = oneRM * 0.90;
-  const sessions = BENCH_BASE.map(s=>{
-    return {
-      id: s.id,
-      sets: s.sets.map(blk=>{
-        const pct = blk.w / BASE_BENCH_TM;
-        const w = roundTo(TM * pct, 2.5);
-        return { w, r: blk.r, n: blk.n };
-      })
-    };
-  });
-  return { sessions, meta: { oneRM, TM, maxW: oneRM, maxReps: 1, inc: 2.5 } };
-}
+const BENCH_PLAN_TM_PCTS = BENCH_PLAN_WEIGHTS.map(s => ({
+  id: s.id,
+  sets: s.sets.map(b => ({ p: (b.w / BASE_BENCH_TM), r: b.r, n: b.n }))
+}));
 
-function makePlanFromTemplates({maxW, maxReps, inc, templates}){
-  const oneRM = (maxReps === 1) ? maxW : epley1RM(maxW, maxReps);
-  const TM = oneRM * 0.90;
-
-  const sessions = Object.keys(templates).sort((a,b)=>{
-    const pa = parseSid(a), pb = parseSid(b);
-    return pa.week !== pb.week ? pa.week - pb.week : pa.day - pb.day;
-  }).map(sid=>{
-    const blocks = templates[sid].map(([pct, reps, n])=>{
-      let w = roundTo(TM * pct, inc);
-      if (w < inc) w = inc;
-      return { w, r: reps, n };
-    });
-    return { id: sid, sets: blocks };
-  });
-
-  return { sessions, meta: { oneRM, TM, maxW, maxReps, inc } };
-}
-
-function buildPlansForMonth(mk){
-  const mo = store.months[mk] || { maxes: defaultMaxes() };
-  const mx = mo.maxes || defaultMaxes();
-
-  // Жим: 3/нед (1.1 / 1.2 / 1.3 и т.д.)
-  const bench = buildBenchPlan(Number(mx.bench1RM || 90));
-
-  // Руки: 2/нед — День 1 и День 3 (1.1, 1.3, 2.1, 2.3, ...)
-  // Важно: избегаем "тяжёлых" процентов, чтобы не конфликтовать с тяжёлым жимом.
-  const armsTemplates = {
-    // Week 1
-    "1.1":[ [0.50,12,1],[0.70,10,3],[0.75, 8,2] ],
-    "1.3":[ [0.45,15,1],[0.60,12,3],[0.65,10,2] ],
-    // Week 2 (немного плотнее на День 1, День 3 легче)
-    "2.1":[ [0.50,12,1],[0.72,10,3],[0.78, 6,3] ],
-    "2.3":[ [0.45,15,1],[0.62,12,3] ],
-    // Week 3 (разгрузка/объём)
-    "3.1":[ [0.45,15,1],[0.60,12,3] ],
-    "3.3":[ [0.40,20,1],[0.55,15,3] ],
-    // Week 4 (умеренно)
-    "4.1":[ [0.50,12,1],[0.70,10,3],[0.76, 8,2] ],
-    "4.3":[ [0.45,15,1],[0.62,12,3],[0.68,10,2] ],
-  };
-
-  const triceps = makePlanFromTemplates({ ...mx.triceps, templates: armsTemplates });
-  const biceps  = makePlanFromTemplates({ ...mx.biceps,  templates: armsTemplates });
-
-  // Тяга верхнего блока: 1/нед — только День 1 (1.1, 2.1, 3.1, 4.1)
-  const pulldownTemplates = {
-    "1.1":[ [0.50,12,1],[0.70,10,4] ],
-    "2.1":[ [0.50,12,1],[0.75, 8,4] ],
-    "3.1":[ [0.45,15,1],[0.65,10,3] ],
-    "4.1":[ [0.50,12,1],[0.78, 8,4] ],
-  };
-  const pulldown = makePlanFromTemplates({ ...mx.pulldown, templates: pulldownTemplates });
-
-  // Ноги: 1/нед — только День 2 (1.2, 2.2, 3.2, 4.2)
-  // Правило: не делаем "тяжело" одновременно жим ногами + изоляцию
-  const legPressTemplates = {
-    "1.2":[ [0.40,15,1],[0.65,12,4],[0.72, 8,2] ],
-    "2.2":[ [0.40,12,1],[0.72,10,4],[0.80, 6,2] ], // тяжелее
-    "3.2":[ [0.35,20,1],[0.60,15,4] ],
-    "4.2":[ [0.40,12,1],[0.75, 8,4],[0.82, 6,1] ], // тяжелее
-  };
-  const legIsoTemplates = {
-    "1.2":[ [0.40,20,1],[0.65,12,4] ],
-    "2.2":[ [0.40,20,1],[0.60,15,4] ], // легче (в паре с тяжелее leg press)
-    "3.2":[ [0.35,25,1],[0.62,15,3] ],
-    "4.2":[ [0.40,20,1],[0.60,15,3] ], // легче (в паре с тяжелее leg press)
-  };
-
-  const legpress = makePlanFromTemplates({ ...mx.legpress, templates: legPressTemplates });
-  const legext   = makePlanFromTemplates({ ...mx.legext,   templates: legIsoTemplates });
-  const legadd   = makePlanFromTemplates({ ...mx.legadd,   templates: legIsoTemplates });
-
-  // Плечи: 1/нед — только День 3 (1.3,2.3,3.3,4.3), умеренно (без "убийства" жима)
-  const shoulderTemplates = {
-    "1.3":[ [0.50, 8,1],[0.65, 6,3],[0.70,5,2] ],
-    "2.3":[ [0.50, 8,1],[0.67, 6,3],[0.72,5,2] ],
-    "3.3":[ [0.45,10,1],[0.60, 8,3] ],
-    "4.3":[ [0.50, 8,1],[0.65, 6,3],[0.70,5,2] ],
-  };
-  const shoulder = makePlanFromTemplates({ ...mx.shoulder, templates: shoulderTemplates });
-
-  return {
-    "Грудь": {
-      "Жим лёжа": bench
-    },
-    "Руки": {
-      "Трицепс": triceps,
-      "Бицепс (блок)": biceps
-    },
-    "Спина": {
-      "Тяга верхнего блока": pulldown
-    },
-    "Ноги": {
-      "Жим ногами": legpress,
-      "Разгибания ног": legext,
-      "Сведение ног": legadd
-    },
-    "Плечи": {
-      "Жим на плечи": shoulder
-    }
-  };
-}
-
-function plans(){
-  return buildPlansForMonth(store.activeMonth);
+function benchLevelBySid(sid){
+  const sess = BENCH_PLAN_TM_PCTS.find(x => x.id === sid);
+  if (!sess) return "medium";
+  const maxP = Math.max(...sess.sets.map(b => b.p));
+  // “тяжесть” относительно TM:
+  // heavy: ~98% TM и выше, medium: ~88–98%, иначе light
+  if (maxP >= 0.98) return "heavy";
+  if (maxP >= 0.88) return "medium";
+  return "light";
 }
 
 /* =========================
-   4) UI: месяц + максимумы
+   3) ШАБЛОНЫ ДЛЯ ДРУГИХ УПРАЖНЕНИЙ
+   (учёт ограничений: тяжёлый жим ↔ не тяжёлые руки; ноги: не два тяжёлых сразу)
 ========================= */
-const $monthSel = document.getElementById("monthSel");
-const $maxForm = document.getElementById("maxForm");
-const $maxHint = document.getElementById("maxHint");
+const TPL = {
+  arms_machine: {
+    light:  [ [0.45,15,1], [0.60,12,2] ],
+    medium: [ [0.50,12,1], [0.70,10,3] ],
+    heavy:  [ [0.50,12,1], [0.75, 8,2], [0.85, 6,2] ],
+  },
+  back_machine: {
+    light:  [ [0.50,12,1], [0.65,10,2] ],
+    medium: [ [0.50,12,1], [0.70,10,3] ],
+    heavy:  [ [0.50,12,1], [0.75, 8,2], [0.85, 6,2] ],
+  },
+  shoulder: {
+    light:  [ [0.45,12,1], [0.60,10,2] ],
+    medium: [ [0.50,10,1], [0.70, 8,3] ],
+  },
+  leg_press: {
+    light:  [ [0.35,20,1], [0.55,15,2], [0.65,12,1] ],
+    medium: [ [0.35,20,1], [0.60,12,3], [0.70,10,1] ],
+    heavy:  [ [0.35,15,1], [0.65,12,2], [0.75,10,2], [0.85, 8,1] ],
+  },
+  leg_iso: {
+    light:  [ [0.35,20,1], [0.55,15,2] ],
+    medium: [ [0.40,18,1], [0.60,12,3] ],
+    heavy:  [ [0.40,15,1], [0.65,12,2], [0.75,10,2] ],
+  }
+};
 
-function ensureActiveMonthExists(){
-  if (!store.months[store.activeMonth]){
-    const keys = Object.keys(store.months).sort().reverse();
-    const prev = keys.find(k => k < store.activeMonth);
-    const base = prev ? store.months[prev].maxes : defaultMaxes();
-    store.months[store.activeMonth] = { checks:{}, doneAt:{}, maxes: JSON.parse(JSON.stringify(base)) };
+function invertLevel(benchLevel){
+  if (benchLevel === "heavy") return "light";
+  if (benchLevel === "medium") return "medium";
+  return "heavy";
+}
+function downshift(level){
+  if (level === "heavy") return "medium";
+  if (level === "medium") return "light";
+  return "light";
+}
+function legLevelsForWeek(weekNo, benchLevel){
+  // Не делаем два тяжёлых упражнения ног в одном дне.
+  // Фокус по неделям:
+  // W1: пресс medium, разгиб light, сведение medium
+  // W2: пресс medium, разгиб heavy, сведение light
+  // W3: пресс heavy, разгиб medium, сведение light  (часто совпадает с более “лёгким” жимом)
+  // W4: разгрузка: пресс light, разгиб medium, сведение light
+  let press = "medium", ext = "light", add = "medium";
+  if (weekNo === 2){ press = "medium"; ext = "heavy"; add = "light"; }
+  if (weekNo === 3){ press = "heavy";  ext = "medium"; add = "light"; }
+  if (weekNo === 4){ press = "light";  ext = "medium"; add = "light"; }
+
+  // Если вдруг жим на этот день оказался тяжёлым/средним — чуть приглушаем самый тяжёлый акцент
+  if (benchLevel === "heavy"){
+    if (press === "heavy") press = "medium";
+    if (ext === "heavy") ext = "medium";
+  }
+  return { press, ext, add };
+}
+
+/* =========================
+   4) ХРАНИЛИЩЕ + МИГРАЦИЯ
+========================= */
+function loadStore(){
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveStore(s){ localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
+
+function keyCheck(monthKey, exId, sid, blockIdx, setIdx){
+  return `${monthKey}|${exId}|${sid}|${blockIdx}|${setIdx}`;
+}
+function keySession(monthKey, sid, day){
+  return `${monthKey}|${sid}|${day}`;
+}
+
+let store = loadStore();
+if (!store.schemaVersion) store.schemaVersion = 0;
+if (!store.checks) store.checks = {};
+if (!store.doneAt) store.doneAt = {};
+if (!store.activeMonth) store.activeMonth = monthKeyNow();
+if (!store.activeWeek) store.activeWeek = 0; // 0=все
+if (!store.activeDay) store.activeDay = 1;
+if (!store.maxByMonth) store.maxByMonth = {}; // month -> exId -> {w,reps}
+
+function effectiveMax(monthKey, exId){
+  const ex = EX[exId];
+  const m = store.maxByMonth?.[monthKey]?.[exId];
+  return m ? { w:Number(m.w)||0, reps:Number(m.reps)||1 } : { ...ex.defaultMax };
+}
+function isCustomMax(monthKey, exId){
+  return !!store.maxByMonth?.[monthKey]?.[exId];
+}
+
+/* Миграция со старого формата (если он был) */
+(function migrate(){
+  const currentMonth = store.activeMonth || monthKeyNow();
+
+  // schemaVersion 0/1/2 → 3: добавляем monthKey + переводим "Жим лёжа" → bench
+  if (store.schemaVersion < 3){
+    const newChecks = {};
+    const newDoneAt = {};
+
+    const mapExNameToId = (name) => {
+      if (name === "Жим лёжа") return "bench";
+      if (name === "Трицепс") return "triceps";
+      if (name === "Бицепс (блок)") return "biceps";
+      if (name === "Тяга верхнего блока") return "pulldown";
+      if (name === "Жим ногами") return "legpress";
+      if (name === "Разгибания ног") return "legext";
+      if (name === "Сгибания ног") return "adduction";
+      if (name === "Сведение ног") return "adduction";
+      if (name === "Жим на плечи") return "shoulder";
+      return null;
+    };
+
+    // checks
+    for (const k of Object.keys(store.checks || {})){
+      // старый ключ мог быть "Жим лёжа|1.1|0|0"
+      const parts = String(k).split("|");
+      if (parts.length >= 4 && !/^\d{4}-\d{2}$/.test(parts[0])){
+        const oldName = parts[0];
+        const sid = parts[1];
+        const b = parts[2];
+        const i = parts[3];
+        const exId = mapExNameToId(oldName);
+        if (exId){
+          const nk = keyCheck(currentMonth, exId, sid, b, i);
+          newChecks[nk] = !!store.checks[k];
+          continue;
+        }
+      }
+      // уже новый или неизвестный — оставим как есть (на всякий)
+      newChecks[k] = store.checks[k];
+    }
+
+    // doneAt (старый мог быть "Жим лёжа|1.1")
+    for (const k of Object.keys(store.doneAt || {})){
+      const parts = String(k).split("|");
+      if (parts.length === 2 && !/^\d{4}-\d{2}$/.test(parts[0])){
+        const exId = mapExNameToId(parts[0]);
+        const sid = parts[1];
+        if (exId){
+          // в новой схеме doneAt можно хранить просто по "month|exId|sid"
+          const nk = `${currentMonth}|${exId}|${sid}`;
+          newDoneAt[nk] = store.doneAt[k];
+          continue;
+        }
+      }
+      newDoneAt[k] = store.doneAt[k];
+    }
+
+    store.checks = newChecks;
+    store.doneAt = newDoneAt;
+
+    // дефолты UI
+    store.activeWeek = store.activeWeek || 0;
+    store.activeDay = store.activeDay || 1;
+    store.schemaVersion = 3;
     saveStore(store);
   }
+
+  // Авто-отметка выполненных 1.1–2.3 по жиму (ТОЛЬКО если по bench ещё нет ни одной отметки в этом месяце)
+  const completedBench = ["1.1","1.2","1.3","2.1","2.2","2.3"];
+  const hasAnyBench = Object.keys(store.checks).some(k => k.startsWith(`${store.activeMonth}|bench|`));
+  if (!hasAnyBench){
+    completedBench.forEach(sid=>{
+      const sess = BENCH_PLAN_TM_PCTS.find(s=>s.id===sid);
+      if (!sess) return;
+      sess.sets.forEach((blk, bIdx)=>{
+        for (let i=0;i<blk.n;i++){
+          store.checks[keyCheck(store.activeMonth,"bench",sid,bIdx,i)] = true;
+        }
+      });
+      store.doneAt[`${store.activeMonth}|bench|${sid}`] = store.doneAt[`${store.activeMonth}|bench|${sid}`] || todayISO();
+    });
+    saveStore(store);
+  }
+})();
+
+/* =========================
+   5) ГЕНЕРАЦИЯ СЕССИЙ (под месяц + выбранный день/неделю)
+========================= */
+function calcMetaForExercise(monthKey, exId){
+  const ex = EX[exId];
+  const mx = effectiveMax(monthKey, exId);
+  const oneRM = epley1RM(mx.w, mx.reps);
+  const TM = oneRM * 0.90;
+  return { ...mx, oneRM, TM, inc: ex.inc };
 }
+
+function buildBlocksFromTpl(TM, inc, tpl){
+  return tpl.map(([pct, reps, n])=>{
+    let w = roundTo(TM * pct, inc);
+    if (w < inc) w = inc;
+    return { w, r: reps, n };
+  });
+}
+
+function benchBlocksForMonth(monthKey, sid){
+  const meta = calcMetaForExercise(monthKey, "bench");
+  const sess = BENCH_PLAN_TM_PCTS.find(s => s.id === sid);
+  if (!sess) return [];
+  return sess.sets.map(b => ({
+    w: Math.max(meta.inc, roundTo(meta.TM * b.p, meta.inc)),
+    r: b.r,
+    n: b.n
+  }));
+}
+
+function levelForExerciseOnSid(exId, sid){
+  const { week, day } = parseSid(sid);
+  const benchLevel = benchLevelBySid(sid);
+
+  if (exId === "bench") return benchLevel;
+
+  // День 1/3: руки + (в день 1 ещё тяга)
+  if (exId === "triceps" || exId === "biceps" || exId === "pulldown"){
+    // Нельзя тяжёлый жим + тяжёлые руки/спина
+    return invertLevel(benchLevel); // heavy bench->light arms; light bench->heavy arms
+  }
+
+  // День 3: плечи — на тяжёлом жиме делаем лёгко
+  if (exId === "shoulder"){
+    if (benchLevel === "heavy") return "light";
+    if (benchLevel === "medium") return "medium";
+    return "medium";
+  }
+
+  // День 2: ноги — распределяем тяжесть по упражнениям
+  if (exId === "legpress" || exId === "legext" || exId === "adduction"){
+    const lv = legLevelsForWeek(week, benchLevel);
+    if (exId === "legpress") return lv.press;
+    if (exId === "legext") return lv.ext;
+    return lv.add;
+  }
+
+  return "medium";
+}
+
+function blocksForExerciseOnSid(monthKey, exId, sid){
+  if (exId === "bench") return benchBlocksForMonth(monthKey, sid);
+
+  const ex = EX[exId];
+  const meta = calcMetaForExercise(monthKey, exId);
+  const level = levelForExerciseOnSid(exId, sid);
+
+  const kind = ex.kind;
+  let tpl = null;
+
+  if (kind === "arms_machine") tpl = TPL.arms_machine[level] || TPL.arms_machine.medium;
+  if (kind === "back_machine") tpl = TPL.back_machine[level] || TPL.back_machine.medium;
+  if (kind === "shoulder"){
+    tpl = (level === "light") ? TPL.shoulder.light : TPL.shoulder.medium;
+  }
+  if (kind === "leg_press") tpl = TPL.leg_press[level] || TPL.leg_press.medium;
+  if (kind === "leg_iso") tpl = TPL.leg_iso[level] || TPL.leg_iso.medium;
+
+  // страховка
+  if (!tpl) tpl = [ [0.50,12,1],[0.70,10,3] ];
+
+  return buildBlocksFromTpl(meta.TM, meta.inc, tpl);
+}
+
+function sessionExercisesForDay(day){
+  return DAY_SCHEMA[day].exIds.slice();
+}
+
+function sessionStats(monthKey, exId, sid, blocks){
+  let sets = 0, reps = 0, tonnage = 0, maxW = 0, doneSets = 0;
+  blocks.forEach((blk, bIdx)=>{
+    sets += blk.n;
+    reps += blk.n * blk.r;
+    tonnage += blk.n * blk.r * blk.w;
+    maxW = Math.max(maxW, blk.w);
+    for (let i=0;i<blk.n;i++){
+      if (store.checks[keyCheck(monthKey, exId, sid, bIdx, i)]) doneSets++;
+    }
+  });
+  return { sets, reps, tonnage, maxW, doneSets };
+}
+
+function isExerciseDone(monthKey, exId, sid, blocks){
+  const st = sessionStats(monthKey, exId, sid, blocks);
+  return st.sets > 0 && st.doneSets === st.sets;
+}
+
+function isSessionDone(monthKey, day, sid, sessionData){
+  // sessionData: array {exId, blocks}
+  let total=0, done=0;
+  sessionData.forEach(x=>{
+    const st = sessionStats(monthKey, x.exId, sid, x.blocks);
+    total += st.sets;
+    done  += st.doneSets;
+  });
+  return total > 0 && done === total;
+}
+
+function markDoneDateIfNeeded(monthKey, exId, sid, blocks){
+  const k = `${monthKey}|${exId}|${sid}`;
+  if (isExerciseDone(monthKey, exId, sid, blocks)){
+    store.doneAt[k] = store.doneAt[k] || todayISO();
+  } else {
+    delete store.doneAt[k];
+  }
+}
+
+function buildSession(monthKey, day, sid){
+  const exIds = sessionExercisesForDay(day);
+  return exIds.map(exId => ({
+    exId,
+    blocks: blocksForExerciseOnSid(monthKey, exId, sid),
+    meta: calcMetaForExercise(monthKey, exId),
+  }));
+}
+
+/* =========================
+   6) UI: РЕНДЕР
+========================= */
+const $monthSel = document.getElementById("monthSel");
+const $weekSeg  = document.getElementById("weekSeg");
+const $daySeg   = document.getElementById("daySeg");
+const $dayHint  = document.getElementById("dayHint");
+const $weeks    = document.getElementById("weeks");
+const $io       = document.getElementById("io");
+const $maxTable = document.getElementById("maxTable");
+const $maxHint  = document.getElementById("maxHint");
+const $daySchemaText = document.getElementById("daySchemaText");
+const $errorBox = document.getElementById("errorBox");
+
+function showError(err){
+  $errorBox.style.display = "block";
+  $errorBox.textContent = String(err && (err.stack || err.message || err) || "Unknown error");
+}
+
+window.addEventListener("error", (e)=>{ showError(e.error || e.message); });
 
 function renderMonthSelect(){
   const options = monthsForwardUntil("2026-12");
   $monthSel.innerHTML = "";
-  options.forEach(mk=>{
-    const opt = document.createElement("option");
-    opt.value = mk;
-    opt.textContent = monthLabel(mk);
-    if (mk === store.activeMonth) opt.selected = true;
-    $monthSel.appendChild(opt);
+  options.forEach(k=>{
+    const o = document.createElement("option");
+    o.value = k;
+    o.textContent = monthLabel(k);
+    $monthSel.appendChild(o);
   });
 
-  const isCurrent = store.activeMonth === currentMonthKey();
-  $maxHint.textContent = isCurrent
-    ? "Текущий месяц — предустановленные значения (заполнитель). Менять удобно со следующего месяца: выберите следующий месяц сверху, выставьте новые 1ПМ/максы и нажмите «Применить»."
-    : "Значения для выбранного месяца. Поменяли — нажмите «Применить», план пересчитается.";
-}
-
-function renderMaxForm(){
-  const mo = monthObj();
-  const mx = mo.maxes || defaultMaxes();
-  $maxForm.innerHTML = "";
-
-  function fieldNumber({id,label,value,step=1,min=0,max=1000,hint=""}){
-    const wrap = document.createElement("div");
-    wrap.className = "field";
-    wrap.innerHTML = `
-      <div class="label">${label}</div>
-      <input class="inp" id="${id}" type="number" step="${step}" min="${min}" max="${max}" value="${value}">
-      ${hint ? `<div class="hint">${hint}</div>` : ``}
-    `;
-    $maxForm.appendChild(wrap);
+  // если активный месяц вне списка (теоретически), ставим текущий
+  if (![...options].includes(store.activeMonth)){
+    store.activeMonth = monthKeyNow();
+    saveStore(store);
   }
+  $monthSel.value = store.activeMonth;
 
-  // Жим 1ПМ
-  fieldNumber({
-    id:"mx_bench",
-    label:"Жим лёжа — 1ПМ (кг)",
-    value: mx.bench1RM ?? 90,
-    step: 2.5,
-    min: 20,
-    max: 300,
-    hint:"1ПМ месяца -> TM=90% -> веса жима пересчитываются."
-  });
-
-  function pair(prefix, title, obj, stepW){
-    fieldNumber({
-      id:`${prefix}_w`,
-      label:`${title} — макс вес (кг)`,
-      value: obj.maxW,
-      step: stepW,
-      min: 0,
-      max: 500,
-      hint:`Шаг веса в плане: ${stepW} кг`
-    });
-    fieldNumber({
-      id:`${prefix}_r`,
-      label:`${title} — макс повторы`,
-      value: obj.maxReps,
-      step: 1,
-      min: 1,
-      max: 30,
-      hint:`Оценка 1ПМ по Epley (если повторы > 1).`
-    });
-  }
-
-  pair("mx_tri", "Трицепс (тренажёр)", mx.triceps, 5);
-  pair("mx_bi",  "Бицепс (блок)",      mx.biceps,  5);
-  pair("mx_pd",  "Тяга верхнего блока",mx.pulldown,5);
-
-  pair("mx_lp",  "Жим ногами",         mx.legpress,5);
-  pair("mx_le",  "Разгибания ног",     mx.legext,  2.5);
-  pair("mx_la",  "Сведение ног",       mx.legadd,  2.5);
-
-  pair("mx_sh",  "Жим на плечи",       mx.shoulder,2.5);
+  $monthSel.onchange = ()=>{
+    store.activeMonth = $monthSel.value;
+    saveStore(store);
+    renderAll();
+  };
 }
 
-function applyMaxFromForm(){
-  const mo = monthObj();
-  const mx = mo.maxes || defaultMaxes();
-
-  function num(id, fallback){
-    const el = document.getElementById(id);
-    const v = el ? Number(el.value) : NaN;
-    return Number.isFinite(v) ? v : fallback;
-  }
-
-  mx.bench1RM = num("mx_bench", mx.bench1RM);
-
-  mx.triceps = { maxW: num("mx_tri_w", mx.triceps.maxW), maxReps: num("mx_tri_r", mx.triceps.maxReps), inc: 5 };
-  mx.biceps  = { maxW: num("mx_bi_w",  mx.biceps.maxW),  maxReps: num("mx_bi_r",  mx.biceps.maxReps),  inc: 5 };
-  mx.pulldown= { maxW: num("mx_pd_w",  mx.pulldown.maxW),maxReps: num("mx_pd_r",  mx.pulldown.maxReps),inc: 5 };
-
-  mx.legpress= { maxW: num("mx_lp_w", mx.legpress.maxW), maxReps: num("mx_lp_r", mx.legpress.maxReps), inc: 5 };
-  mx.legext  = { maxW: num("mx_le_w", mx.legext.maxW),   maxReps: num("mx_le_r", mx.legext.maxReps),   inc: 2.5 };
-  mx.legadd  = { maxW: num("mx_la_w", mx.legadd.maxW),   maxReps: num("mx_la_r", mx.legadd.maxReps),   inc: 2.5 };
-
-  mx.shoulder= { maxW: num("mx_sh_w", mx.shoulder.maxW), maxReps: num("mx_sh_r", mx.shoulder.maxReps), inc: 2.5 };
-
-  mo.maxes = mx;
-  saveStore(store);
+function segButton(text, active, onClick){
+  const b = document.createElement("button");
+  b.textContent = text;
+  b.className = active ? "active" : "";
+  b.onclick = onClick;
+  return b;
 }
 
-/* =========================
-   5) РЕНДЕР (по упражнению)
-========================= */
-const $groupSeg = document.getElementById("groupSeg");
-const $exerciseSeg = document.getElementById("exerciseSeg");
-const $weeks = document.getElementById("weeks");
-const $exTitle = document.getElementById("exTitle");
-const $exMeta = document.getElementById("exMeta");
-const $exProgress = document.getElementById("exProgress");
-const $io = document.getElementById("io");
-
-function findDefault(pl){
-  const g = Object.keys(pl)[0];
-  const e = Object.keys(pl[g])[0];
-  return { g, e };
-}
-
-function validateActiveTabs(pl){
-  if (!store.activeGroup || !pl[store.activeGroup]){
-    const def = findDefault(pl);
-    store.activeGroup = def.g;
-  }
-  if (!store.activeExercise || !pl[store.activeGroup][store.activeExercise]){
-    store.activeExercise = Object.keys(pl[store.activeGroup])[0];
-  }
-  saveStore(store);
-}
-
-function sessionStats(mo, exName, sess){
-  let sets = 0, reps = 0, tonnage = 0;
-  sess.sets.forEach((blk)=>{
-    sets += blk.n;
-    reps += blk.n * blk.r;
-    tonnage += blk.n * blk.r * blk.w;
-  });
-
-  let doneSets = 0;
-  sess.sets.forEach((blk, bIdx)=>{
-    for (let i=0;i<blk.n;i++){
-      if (mo.checks[keyCheck(exName, sess.id, bIdx, i)]) doneSets++;
-    }
-  });
-
-  return { sets, reps, tonnage, doneSets };
-}
-
-function isSessionDone(mo, exName, sess){
-  const st = sessionStats(mo, exName, sess);
-  return st.sets > 0 && st.doneSets === st.sets;
-}
-function markSessionDoneDate(mo, exName, sess){
-  const k = keySession(exName, sess.id);
-  if (isSessionDone(mo, exName, sess)){
-    mo.doneAt[k] = mo.doneAt[k] || todayISO();
-  } else {
-    delete mo.doneAt[k];
-  }
-}
-
-function renderGroupSeg(pl){
-  $groupSeg.innerHTML = "";
-  Object.keys(pl).forEach(g=>{
-    const b = document.createElement("button");
-    b.textContent = g;
-    b.className = (g===store.activeGroup) ? "active" : "";
-    b.onclick = ()=>{
-      store.activeGroup = g;
-      store.activeExercise = Object.keys(pl[g])[0];
+function renderWeekSeg(){
+  $weekSeg.innerHTML = "";
+  const items = [
+    {v:0, t:"Все"},
+    {v:1, t:"1"},
+    {v:2, t:"2"},
+    {v:3, t:"3"},
+    {v:4, t:"4"},
+  ];
+  items.forEach(it=>{
+    $weekSeg.appendChild(segButton(it.t, store.activeWeek===it.v, ()=>{
+      store.activeWeek = it.v;
       saveStore(store);
       renderAll();
-    };
-    $groupSeg.appendChild(b);
+    }));
   });
 }
 
-function renderExerciseSeg(pl){
-  $exerciseSeg.innerHTML = "";
-  Object.keys(pl[store.activeGroup]).forEach(ex=>{
-    const b = document.createElement("button");
-    b.textContent = ex;
-    b.className = (ex===store.activeExercise) ? "active" : "";
-    b.onclick = ()=>{
-      store.activeExercise = ex;
+function renderDaySeg(){
+  $daySeg.innerHTML = "";
+  [1,2,3].forEach(d=>{
+    $daySeg.appendChild(segButton(DAY_SCHEMA[d].title, store.activeDay===d, ()=>{
+      store.activeDay = d;
       saveStore(store);
       renderAll();
-    };
-    $exerciseSeg.appendChild(b);
+    }));
   });
 }
 
-function renderWeeks(pl){
+function renderDayText(){
+  const d = DAY_SCHEMA[store.activeDay];
+  $dayHint.textContent = `Сейчас: ${d.title} — ${d.text}. (Неделя — это фильтр отображения.)`;
+  $daySchemaText.textContent = `День 1: ${DAY_SCHEMA[1].text}. День 2: ${DAY_SCHEMA[2].text}. День 3: ${DAY_SCHEMA[3].text}.`;
+}
+
+function renderMaxTable(){
+  const monthKey = store.activeMonth;
+  $maxTable.innerHTML = "";
+
+  const rows = Object.keys(EX).map(exId=>{
+    const ex = EX[exId];
+    const eff = effectiveMax(monthKey, exId);
+    const meta = calcMetaForExercise(monthKey, exId);
+
+    const tr = document.createElement("tr");
+
+    const td0 = document.createElement("td");
+    td0.style.width = "42%";
+    td0.innerHTML = `<div style="font-weight:1000">${ex.name}</div>
+      <div class="hint">шаг: ${fmtWeight(ex.inc)} кг • ${isCustomMax(monthKey,exId) ? "сохранено" : "по умолчанию"}</div>`;
+    tr.appendChild(td0);
+
+    const td1 = document.createElement("td");
+    td1.style.width = "25%";
+    td1.innerHTML = `<div class="hint">вес</div><input class="in" inputmode="decimal" id="mx_w_${exId}" value="${eff.w}">`;
+    tr.appendChild(td1);
+
+    const td2 = document.createElement("td");
+    td2.style.width = "16%";
+    const repsDisabled = (exId==="bench" || exId==="pulldown" || exId==="shoulder") ? "disabled" : "";
+    td2.innerHTML = `<div class="hint">повт.</div><input class="in" inputmode="numeric" id="mx_r_${exId}" value="${eff.reps}" ${repsDisabled}>`;
+    tr.appendChild(td2);
+
+    const td3 = document.createElement("td");
+    td3.style.width = "17%";
+    td3.innerHTML = `<div class="hint">оценка</div>
+      <div style="font-weight:1000">${fmtWeight(meta.oneRM)} 1ПМ</div>
+      <div class="hint">TM≈${fmtWeight(meta.TM)}</div>`;
+    tr.appendChild(td3);
+
+    $maxTable.appendChild(tr);
+  });
+
+  const monthIsCustomAny = Object.keys(EX).some(exId => isCustomMax(monthKey, exId));
+  $maxHint.textContent = monthIsCustomAny
+    ? "Для этого месяца есть сохранённые максимумы. Можно сбросить (к умолчанию) кнопкой «Сброс месяца»."
+    : "Сейчас всё “по умолчанию” (предустановленный заполнитель). Если нажмёте «Сохранить» — значения закрепятся для этого месяца.";
+}
+
+function clearError(){
+  $errorBox.style.display = "none";
+  $errorBox.textContent = "";
+}
+
+function renderWeeks(){
   $weeks.innerHTML = "";
-  const mo = monthObj();
+  clearError();
 
-  const exGroup = store.activeGroup;
-  const exName = store.activeExercise;
-  const ex = pl[exGroup][exName];
-  const meta = ex.meta;
+  const monthKey = store.activeMonth;
+  const day = store.activeDay;
 
-  $exTitle.textContent = exName;
+  const weeksToShow = (store.activeWeek === 0) ? [1,2,3,4] : [store.activeWeek];
 
-  // мета-текст + пометка "предустановлено" для текущего месяца
-  const isCurrent = store.activeMonth === currentMonthKey();
-  const presetTag = isCurrent ? " • предустановлено" : "";
+  weeksToShow.forEach(weekNo=>{
+    const sid = sidOf(weekNo, day);
+    const sessionData = buildSession(monthKey, day, sid);
 
-  let metaText = "";
-  if (exName === "Жим лёжа"){
-    metaText = `Месяц: ${monthLabel(store.activeMonth)}${presetTag} • 1ПМ: ${fmtWeight(meta.oneRM)} кг • TM≈${fmtWeight(meta.TM)} кг • 4 недели × 3 тренировки`;
-  } else {
-    metaText = `Месяц: ${monthLabel(store.activeMonth)}${presetTag} • Макс: ${fmtWeight(meta.maxW)}×${meta.maxReps} • 1ПМ≈${fmtWeight(meta.oneRM)} • TM≈${fmtWeight(meta.TM)}`;
-  }
-  $exMeta.textContent = metaText;
-
-  // прогресс
-  let total = 0, done = 0;
-  ex.sessions.forEach(s=>{
-    const st = sessionStats(mo, exName, s);
-    total += st.sets;
-    done += st.doneSets;
-  });
-  $exProgress.textContent = `Прогресс: ${done}/${total} подходов`;
-
-  // группировка по неделям
-  const byWeek = new Map();
-  ex.sessions.forEach(s=>{
-    const w = parseSid(s.id).week || 0;
-    if (!byWeek.has(w)) byWeek.set(w, []);
-    byWeek.get(w).push(s);
-  });
-
-  [...byWeek.keys()].sort((a,b)=>a-b).forEach(weekNo=>{
-    const sessions = byWeek.get(weekNo).sort((a,b)=>parseSid(a.id).day-parseSid(b.id).day);
-
-    let wTotal=0, wDone=0;
-    sessions.forEach(s=>{
-      const st = sessionStats(mo, exName, s);
-      wTotal += st.sets;
-      wDone += st.doneSets;
+    // прогресс недели (тут фактически “тренировка недели X, день Y”)
+    let total=0, done=0, totalReps=0, totalTonnage=0;
+    sessionData.forEach(x=>{
+      const st = sessionStats(monthKey, x.exId, sid, x.blocks);
+      total += st.sets;
+      done  += st.doneSets;
+      totalReps += st.reps;
+      totalTonnage += st.tonnage;
     });
+    const allDone = (total>0 && done===total);
+    const doneDate = store.doneAt[`${monthKey}|bench|${sid}`] || ""; // ориентир (по жиму)
 
     const det = document.createElement("details");
     det.className = "week";
     det.open = true;
 
     const sum = document.createElement("summary");
-    sum.innerHTML = `<div>Неделя ${weekNo}</div><div class="weekMeta">${wDone}/${wTotal} подходов</div>`;
+    sum.innerHTML = `<div>Неделя ${weekNo}</div><div class="weekMeta">${done}/${total} подходов</div>`;
     det.appendChild(sum);
 
-    sessions.forEach(sess=>{
-      const st = sessionStats(mo, exName, sess);
-      const doneSess = isSessionDone(mo, exName, sess);
-      const doneDate = mo.doneAt[keySession(exName, sess.id)];
-      const dayNo = parseSid(sess.id).day;
+    const wrap = document.createElement("div");
+    wrap.className = "session";
+    wrap.dataset.sid = sid;
 
-      const wrap = document.createElement("div");
-      wrap.className = "session";
-      wrap.dataset.sid = sess.id;
+    const head = document.createElement("div");
+    head.className = "sessionHead";
 
-      const head = document.createElement("div");
-      head.className = "sessionHead";
+    const left = document.createElement("div");
+    left.innerHTML = `
+      <div class="sid">${DAY_SCHEMA[day].title} <span class="muted2">(${sid})</span></div>
+      <div class="stats">${done}/${total} подходов • ${totalReps} повторов • тоннаж ${fmtWeight(totalTonnage)} кг</div>
+    `;
 
-      const left = document.createElement("div");
-      left.innerHTML = `
-        <div class="sid">День ${dayNo} <span class="muted2">(${sess.id})</span></div>
-        <div class="stats">${st.doneSets}/${st.sets} подходов • ${st.reps} повторов • тоннаж ${fmtWeight(st.tonnage)} кг</div>
+    const right = document.createElement("div");
+    right.className = "sessionBtns";
+
+    const badge = document.createElement("div");
+    badge.className = "badge" + (allDone ? " done" : "");
+    badge.textContent = allDone ? `Выполнено${doneDate ? " • "+doneDate : ""}` : "Не выполнено";
+
+    const btnAll = document.createElement("button");
+    btnAll.className = "btn mini ok";
+    btnAll.textContent = "✓ всё";
+    btnAll.onclick = ()=>{
+      sessionData.forEach(x=>{
+        x.blocks.forEach((blk, bIdx)=>{
+          for (let i=0;i<blk.n;i++){
+            store.checks[keyCheck(monthKey, x.exId, sid, bIdx, i)] = true;
+          }
+        });
+        store.doneAt[`${monthKey}|${x.exId}|${sid}`] = store.doneAt[`${monthKey}|${x.exId}|${sid}`] || todayISO();
+      });
+      saveStore(store);
+      renderAll();
+    };
+
+    const btnClear = document.createElement("button");
+    btnClear.className = "btn mini bad";
+    btnClear.textContent = "Сброс";
+    btnClear.onclick = ()=>{
+      sessionData.forEach(x=>{
+        x.blocks.forEach((blk, bIdx)=>{
+          for (let i=0;i<blk.n;i++){
+            delete store.checks[keyCheck(monthKey, x.exId, sid, bIdx, i)];
+          }
+        });
+        delete store.doneAt[`${monthKey}|${x.exId}|${sid}`];
+      });
+      saveStore(store);
+      renderAll();
+    };
+
+    right.appendChild(badge);
+    right.appendChild(btnAll);
+    right.appendChild(btnClear);
+
+    head.appendChild(left);
+    head.appendChild(right);
+    wrap.appendChild(head);
+
+    // упражнения
+    sessionData.forEach(x=>{
+      const ex = EX[x.exId];
+      const st = sessionStats(monthKey, x.exId, sid, x.blocks);
+      const doneEx = (st.sets>0 && st.doneSets===st.sets);
+      const exDoneDate = store.doneAt[`${monthKey}|${x.exId}|${sid}`];
+
+      const exCard = document.createElement("div");
+      exCard.className = "exCard";
+
+      const exHead = document.createElement("div");
+      exHead.className = "exHead";
+
+      const exLeft = document.createElement("div");
+      exLeft.innerHTML = `
+        <div class="exName">${ex.name}</div>
+        <div class="exMeta">
+          TM≈${fmtWeight(x.meta.TM)} • 1ПМ≈${fmtWeight(x.meta.oneRM)} • шаг ${fmtWeight(ex.inc)} кг • ${st.doneSets}/${st.sets} подходов
+        </div>
       `;
 
-      const right = document.createElement("div");
-      right.className = "sessionBtns";
+      const exRight = document.createElement("div");
+      exRight.className = "exBtns";
 
-      const badge = document.createElement("div");
-      badge.className = "badge" + (doneSess ? " done" : "");
-      badge.textContent = doneSess ? `Выполнено${doneDate ? " • "+doneDate : ""}` : "Не выполнено";
+      const b = document.createElement("div");
+      b.className = "badge" + (doneEx ? " done" : "");
+      b.textContent = doneEx ? `Готово${exDoneDate ? " • "+exDoneDate : ""}` : "—";
 
-      const btnAll = document.createElement("button");
-      btnAll.className = "btn mini ok";
-      btnAll.textContent = "✓ всё";
-      btnAll.onclick = ()=>{
-        sess.sets.forEach((blk,bIdx)=>{
-          for(let i=0;i<blk.n;i++) mo.checks[keyCheck(exName, sess.id, bIdx, i)] = true;
+      const exReset = document.createElement("button");
+      exReset.className = "btn mini bad";
+      exReset.textContent = "Сброс";
+      exReset.onclick = ()=>{
+        x.blocks.forEach((blk,bIdx)=>{
+          for (let i=0;i<blk.n;i++) delete store.checks[keyCheck(monthKey,x.exId,sid,bIdx,i)];
         });
-        markSessionDoneDate(mo, exName, sess);
+        delete store.doneAt[`${monthKey}|${x.exId}|${sid}`];
         saveStore(store);
         renderAll();
       };
 
-      const btnClear = document.createElement("button");
-      btnClear.className = "btn mini bad";
-      btnClear.textContent = "Сброс";
-      btnClear.onclick = ()=>{
-        sess.sets.forEach((blk,bIdx)=>{
-          for(let i=0;i<blk.n;i++) delete mo.checks[keyCheck(exName, sess.id, bIdx, i)];
-        });
-        delete mo.doneAt[keySession(exName, sess.id)];
-        saveStore(store);
-        renderAll();
-      };
+      exRight.appendChild(b);
+      exRight.appendChild(exReset);
 
-      right.appendChild(badge);
-      right.appendChild(btnAll);
-      right.appendChild(btnClear);
-
-      head.appendChild(left);
-      head.appendChild(right);
+      exHead.appendChild(exLeft);
+      exHead.appendChild(exRight);
 
       const sets = document.createElement("div");
       sets.className = "sets";
 
-      sess.sets.forEach((blk, bIdx)=>{
+      x.blocks.forEach((blk, bIdx)=>{
         const row = document.createElement("div");
         row.className = "setRow";
 
@@ -1060,32 +1155,32 @@ function renderWeeks(pl){
 
         for (let i=0;i<blk.n;i++){
           const c = document.createElement("div");
-          const ck = keyCheck(exName, sess.id, bIdx, i);
-          c.className = "chk" + (mo.checks[ck] ? " on" : "");
-          c.textContent = mo.checks[ck] ? "✓" : (i+1);
+          const ck = keyCheck(monthKey, x.exId, sid, bIdx, i);
+          c.className = "chk" + (store.checks[ck] ? " on" : "");
+          c.textContent = store.checks[ck] ? "✓" : (i+1);
           c.onclick = ()=>{
-            mo.checks[ck] = !mo.checks[ck];
-            markSessionDoneDate(mo, exName, sess);
+            store.checks[ck] = !store.checks[ck];
+            markDoneDateIfNeeded(monthKey, x.exId, sid, x.blocks);
             saveStore(store);
             renderAll();
           };
           r.appendChild(c);
         }
 
-        const quick = document.createElement("button");
-        quick.className = "btn mini ok";
-        quick.textContent = "✓ все";
+        const quick = document.createElement("div");
+        quick.className = "chk quick";
+        quick.textContent = "все";
         quick.onclick = ()=>{
           let allOn = true;
           for (let i=0;i<blk.n;i++){
-            if (!mo.checks[keyCheck(exName, sess.id, bIdx, i)]) { allOn=false; break; }
+            if (!store.checks[keyCheck(monthKey, x.exId, sid, bIdx, i)]) { allOn=false; break; }
           }
           for (let i=0;i<blk.n;i++){
-            const ck = keyCheck(exName, sess.id, bIdx, i);
-            if (allOn) delete mo.checks[ck];
-            else mo.checks[ck] = true;
+            const ck = keyCheck(monthKey, x.exId, sid, bIdx, i);
+            if (allOn) delete store.checks[ck];
+            else store.checks[ck] = true;
           }
-          markSessionDoneDate(mo, exName, sess);
+          markDoneDateIfNeeded(monthKey, x.exId, sid, x.blocks);
           saveStore(store);
           renderAll();
         };
@@ -1096,74 +1191,113 @@ function renderWeeks(pl){
         sets.appendChild(row);
       });
 
-      wrap.appendChild(head);
-      wrap.appendChild(sets);
-      det.appendChild(wrap);
+      exCard.appendChild(exHead);
+      exCard.appendChild(sets);
+      wrap.appendChild(exCard);
     });
 
+    det.appendChild(wrap);
     $weeks.appendChild(det);
   });
 }
 
-/* =========================
-   6) КНОПКИ + I/O
-========================= */
-function nextIncomplete(pl){
-  const mo = monthObj();
-  const exName = store.activeExercise;
-  const ex = pl[store.activeGroup][exName];
-  for (const s of ex.sessions){
-    if (!isSessionDone(mo, exName, s)) return s.id;
+function nextIncompleteSid(){
+  const monthKey = store.activeMonth;
+  const day = store.activeDay;
+  const weeks = (store.activeWeek === 0) ? [1,2,3,4] : [store.activeWeek];
+
+  for (const w of weeks){
+    const sid = sidOf(w, day);
+    const sessionData = buildSession(monthKey, day, sid);
+    let total=0, done=0;
+    sessionData.forEach(x=>{
+      const st = sessionStats(monthKey, x.exId, sid, x.blocks);
+      total += st.sets;
+      done += st.doneSets;
+    });
+    if (total > 0 && done < total) return sid;
   }
   return null;
 }
-function scrollToSession(sid){
+
+function scrollToSid(sid){
   const el = document.querySelector(`.session[data-sid="${sid}"]`);
   if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
 }
 
 function renderAll(){
-  ensureActiveMonthExists();
-  const pl = plans();
-  validateActiveTabs(pl);
-
-  renderMonthSelect();
-  renderMaxForm();
-
-  renderGroupSeg(pl);
-  renderExerciseSeg(pl);
-  renderWeeks(pl);
+  try{
+    renderMonthSelect();
+    renderWeekSeg();
+    renderDaySeg();
+    renderDayText();
+    renderMaxTable();
+    renderWeeks();
+  }catch(e){
+    showError(e);
+  }
 }
 
-$monthSel.onchange = ()=>{
-  store.activeMonth = $monthSel.value;
-  ensureActiveMonthExists();
+/* =========================
+   7) КНОПКИ
+========================= */
+document.getElementById("btnNext").onclick = ()=>{
+  const sid = nextIncompleteSid();
+  if (!sid) return alert("В выбранном дне всё отмечено как выполненное.");
+  scrollToSid(sid);
+};
+
+document.getElementById("btnResetDay").onclick = ()=>{
+  const monthKey = store.activeMonth;
+  const day = store.activeDay;
+  if (!confirm(`Сбросить отметки для ${DAY_SCHEMA[day].title} за ${monthLabel(monthKey)}?`)) return;
+
+  for (let w=1; w<=4; w++){
+    const sid = sidOf(w, day);
+    const sessionData = buildSession(monthKey, day, sid);
+    sessionData.forEach(x=>{
+      x.blocks.forEach((blk,bIdx)=>{
+        for (let i=0;i<blk.n;i++){
+          delete store.checks[keyCheck(monthKey, x.exId, sid, bIdx, i)];
+        }
+      });
+      delete store.doneAt[`${monthKey}|${x.exId}|${sid}`];
+    });
+  }
   saveStore(store);
   renderAll();
 };
 
-document.getElementById("btnApplyMax").onclick = ()=>{
-  applyMaxFromForm();
-  renderAll();
-};
+document.getElementById("btnSaveMax").onclick = ()=>{
+  const monthKey = store.activeMonth;
+  if (!store.maxByMonth[monthKey]) store.maxByMonth[monthKey] = {};
 
-document.getElementById("btnNext").onclick = ()=>{
-  const pl = plans();
-  const sid = nextIncomplete(pl);
-  if (!sid) return alert("В этом упражнении всё отмечено как выполненное (в выбранном месяце).");
-  scrollToSession(sid);
-};
+  Object.keys(EX).forEach(exId=>{
+    const w = Number(document.getElementById(`mx_w_${exId}`).value || 0);
+    const rEl = document.getElementById(`mx_r_${exId}`);
+    const reps = Number((rEl && !rEl.disabled) ? (rEl.value || 1) : effectiveMax(monthKey, exId).reps);
 
-document.getElementById("btnResetExercise").onclick = ()=>{
-  const mo = monthObj();
-  const exName = store.activeExercise;
-  if (!confirm(`Сбросить отметки для упражнения "${exName}" за ${monthLabel(store.activeMonth)}?`)) return;
-
-  Object.keys(mo.checks).forEach(k=>{
-    if (k.startsWith(exName + "|")) delete mo.checks[k];
+    store.maxByMonth[monthKey][exId] = { w, reps };
   });
-  Object.keys(mo.doneAt).forEach(k=>{
-    if (k.startsWith(exName + "|")) delete mo.doneAt[k];
+
+  saveStore(store);
+  renderAll();
+  alert("Максимумы сохранены для выбранного месяца.");
+};
+
+document.getElementById("btnResetMonth").onclick = ()=>{
+  const monthKey = store.activeMonth;
+  if (!confirm(`Сбросить сохранённые максимумы (и отметки) за ${monthLabel(monthKey)}?`)) return;
+
+  // удалить максимумы месяца
+  delete store.maxByMonth[monthKey];
+
+  // удалить отметки месяца
+  Object.keys(store.checks).forEach(k=>{
+    if (k.startsWith(monthKey + "|")) delete store.checks[k];
+  });
+  Object.keys(store.doneAt).forEach(k=>{
+    if (k.startsWith(monthKey + "|")) delete store.doneAt[k];
   });
 
   saveStore(store);
@@ -1171,10 +1305,9 @@ document.getElementById("btnResetExercise").onclick = ()=>{
 };
 
 document.getElementById("btnResetAll").onclick = ()=>{
-  if (!confirm("Сбросить ВСЕ отметки по всем месяцам и упражнениям?")) return;
-  store.months = {};
-  store.activeMonth = currentMonthKey();
-  store.months[store.activeMonth] = { checks:{}, doneAt:{}, maxes: defaultMaxes() };
+  if (!confirm("Сбросить ВСЕ отметки по всем месяцам?")) return;
+  store.checks = {};
+  store.doneAt = {};
   saveStore(store);
   renderAll();
 };
@@ -1188,11 +1321,14 @@ document.getElementById("btnImport").onclick = ()=>{
     const incoming = JSON.parse($io.value || "{}");
     if (!incoming || typeof incoming !== "object") throw new Error("bad");
 
-    if (!incoming.schemaVersion) incoming.schemaVersion = 5;
-    if (!incoming.months) incoming.months = {};
-    if (!incoming.activeMonth) incoming.activeMonth = currentMonthKey();
-    if (!incoming.months[incoming.activeMonth]) incoming.months[incoming.activeMonth] = { checks:{}, doneAt:{}, maxes: defaultMaxes() };
-    if (!incoming.months[incoming.activeMonth].maxes) incoming.months[incoming.activeMonth].maxes = defaultMaxes();
+    if (!incoming.checks) incoming.checks = {};
+    if (!incoming.doneAt) incoming.doneAt = {};
+    if (!incoming.maxByMonth) incoming.maxByMonth = {};
+    incoming.schemaVersion = 3;
+
+    if (!incoming.activeMonth) incoming.activeMonth = monthKeyNow();
+    if (!incoming.activeWeek) incoming.activeWeek = 0;
+    if (!incoming.activeDay) incoming.activeDay = 1;
 
     store = incoming;
     saveStore(store);
@@ -1204,11 +1340,12 @@ document.getElementById("btnImport").onclick = ()=>{
 };
 
 /* =========================
-   7) PWA: service worker
+   8) PWA: service worker
+   ВАЖНО: если у вас кэшируется старая версия — меняйте ?v=...
 ========================= */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js?v=8").catch(()=>{});
+    navigator.serviceWorker.register("./sw.js?v=" + encodeURIComponent(APP_VERSION)).catch(()=>{});
   });
 }
 
