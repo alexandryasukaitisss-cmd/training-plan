@@ -79,6 +79,20 @@
     .btn.bad{border-color: rgba(255,59,48,.35); color: var(--bad)}
     .btn.mini{height:34px; border-radius:10px; padding:0 10px; font-weight:800; font-size:12px}
 
+    .sel{
+      height:40px;
+      padding:0 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: var(--card);
+      color:var(--txt);
+      font-weight:800;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      appearance:none;
+      -webkit-appearance:none;
+    }
+
     .grid{
       display:grid; grid-template-columns: 1fr; gap:12px;
     }
@@ -205,27 +219,52 @@
       font-size:12px;
     }
 
-    /* ===== iPhone / узкие экраны: чтобы отметки и кнопки не ломали ширину ===== */
-    @media (max-width: 430px){
+    .formGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .field{
+      border:1px solid var(--border);
+      background: var(--card2);
+      border-radius:14px;
+      padding:10px;
+    }
+    .label{font-size:11px; color:var(--muted); font-weight:900; margin-bottom:6px}
+    .inp{
+      width:100%;
+      height:38px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color:var(--txt);
+      padding:0 10px;
+      font-weight:900;
+      font-size:13px;
+    }
+    @media (prefers-color-scheme: light){
+      .inp{ background: rgba(0,0,0,.03); }
+    }
+    .hint{font-size:11px; color:var(--muted); margin-top:6px; line-height:1.25}
 
+    /* Узкие экраны (iPhone) */
+    @media (max-width: 430px){
       .setRow{
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
       }
-
       .checks{
         justify-content: flex-start;
         gap: 6px;
       }
-
       .chk{
         width: 30px;
         height: 30px;
         border-radius: 9px;
         font-size: 12px;
       }
-
       .sessionHead{
         flex-direction: column;
         align-items: stretch;
@@ -234,25 +273,6 @@
         width: 100%;
         justify-content: flex-start;
       }
-
-      .quickBtn{
-        width: 42px;
-        min-width: 42px;
-        padding: 0;
-        position: relative;
-        color: transparent !important;
-      }
-      .quickBtn::after{
-        content: "✓";
-        position: absolute;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        color: var(--txt);
-        font-weight: 1000;
-        font-size: 14px;
-      }
-
       .btn.mini{
         height: 32px;
         border-radius: 10px;
@@ -264,6 +284,11 @@
         padding: 0 10px;
         font-size: 13px;
       }
+      .sel{
+        height: 36px;
+        font-size: 13px;
+      }
+      .formGrid{grid-template-columns: 1fr}
     }
   </style>
 </head>
@@ -273,10 +298,12 @@
     <div>
       <h1>Тренировочный план</h1>
       <div class="sub" id="subtitle">
-        Отметки сохраняются на устройстве. Логика: <b>квадратик = подход</b> (а не повтор).
+        Отметки сохраняются на устройстве (по месяцам). Логика: <b>квадратик = подход</b>.<br>
+        Структура: <b>День 1</b> (Жим+Руки+Тяга), <b>День 2</b> (Жим+Ноги), <b>День 3</b> (Жим+Руки+Плечи).
       </div>
     </div>
     <div class="topActions">
+      <select class="sel" id="monthSel" title="Месяц"></select>
       <button class="btn ok" id="btnNext">Следующая</button>
       <button class="btn bad" id="btnResetExercise">Сброс упражнения</button>
     </div>
@@ -315,8 +342,22 @@
     <div class="card">
       <div class="rowBetween">
         <div>
+          <div class="title2">Максимумы на месяц</div>
+          <div class="mini" id="maxHint">Текущий месяц — предустановленные значения. Менять удобно со следующего месяца (просто выберите его сверху).</div>
+        </div>
+        <div class="rowBetween" style="gap:8px">
+          <button class="btn mini" id="btnApplyMax">Применить</button>
+        </div>
+      </div>
+
+      <div class="formGrid" id="maxForm"></div>
+
+      <div style="height:14px"></div>
+
+      <div class="rowBetween">
+        <div>
           <div class="title2">Экспорт / импорт</div>
-          <div class="mini">Для переноса отметок на другое устройство (копипаст JSON).</div>
+          <div class="mini">Перенос данных между устройствами (копипаст JSON).</div>
         </div>
         <div class="rowBetween" style="gap:8px">
           <button class="btn mini" id="btnExport">Экспорт</button>
@@ -324,13 +365,14 @@
           <button class="btn mini bad" id="btnResetAll">Сброс всё</button>
         </div>
       </div>
+
       <div style="height:10px"></div>
       <textarea id="io" placeholder="Тут появится JSON (экспорт) / сюда вставьте JSON (импорт)"></textarea>
 
       <div style="height:12px"></div>
       <div class="title2">Как это устроено</div>
       <div class="mini">
-        Прогресс хранится в <b>localStorage</b> вашего устройства. Код открыт (GitHub Pages), но ваши отметки “выполнено” не публикуются.
+        Прогресс хранится в <b>localStorage</b> (устройства) и разделён по <b>месяцам</b>.
       </div>
     </div>
   </div>
@@ -340,7 +382,7 @@
 /* =========================
    0) УТИЛИТЫ
 ========================= */
-const STORE_KEY = "training_pwa_v2";
+const STORE_KEY = "training_pwa_v2"; // сохраняем совместимость с вашим текущим хранилищем
 
 function todayISO(){
   const d = new Date();
@@ -348,6 +390,12 @@ function todayISO(){
   const m = String(d.getMonth()+1).padStart(2,"0");
   const da = String(d.getDate()).padStart(2,"0");
   return `${y}-${m}-${da}`;
+}
+function currentMonthKey(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  return `${y}-${m}`;
 }
 function roundTo(x, inc){
   return Math.round(x / inc) * inc;
@@ -369,24 +417,157 @@ function parseSid(sid){
   const [w, d] = String(sid).split(".");
   return { week: Number(w), day: Number(d) };
 }
-function ruTrain(n){
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod10 === 1 && mod100 !== 11) return "тренировка";
-  if (mod10 >= 2 && mod10 <= 4 && !(mod100 >= 12 && mod100 <= 14)) return "тренировки";
-  return "тренировок";
+const RU_MONTHS = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+function monthLabel(key){
+  const [y,m] = key.split("-");
+  const mi = Number(m)-1;
+  return `${RU_MONTHS[mi]} ${y}`;
+}
+function lastNMonths(n){
+  const out = [];
+  const d = new Date();
+  d.setDate(1);
+  for(let i=0;i<n;i++){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    out.push(`${y}-${m}`);
+    d.setMonth(d.getMonth()-1);
+  }
+  return out;
 }
 
 /* =========================
-   1) ПЛАНЫ
-   Частота:
-   - Жим: 3/нед
-   - Руки: 2/нед
-   - Ноги: 1/нед
+   1) МАКСИМУМЫ (ДЕФОЛТЫ)
+   Предустановленные значения для текущего месяца
 ========================= */
-const BENCH_1RM = 90;
+function defaultMaxes(){
+  return {
+    // Жим — 1ПМ
+    bench1RM: 90,
 
-const BENCH_PLAN = [
+    // Тренажёры рук: шаг 5 кг
+    triceps: { maxW: 40, maxReps: 6, inc: 5 },
+    biceps:  { maxW: 55, maxReps: 6, inc: 5 },
+
+    // Тяга верхнего блока: шаг 5 кг (макс 1×65)
+    pulldown:{ maxW: 65, maxReps: 1, inc: 5 },
+
+    // Ноги
+    legpress:{ maxW: 170, maxReps: 4, inc: 5 },
+    legext:  { maxW: 55,  maxReps: 6, inc: 2.5 },
+    legadd:  { maxW: 55,  maxReps: 6, inc: 2.5 }, // сведение ног
+
+    // Плечи: жим на плечи (1ПМ 45)
+    // (шаг по умолчанию 2.5 — если у вас шаг 5, можно поменять в коде за 1 строку)
+    shoulder:{ maxW: 45,  maxReps: 1, inc: 2.5 },
+  };
+}
+
+/* =========================
+   2) ХРАНИЛИЩЕ + МИГРАЦИЯ
+========================= */
+function loadStore(){
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveStore(s){
+  localStorage.setItem(STORE_KEY, JSON.stringify(s));
+}
+
+let store = loadStore();
+if (!store.schemaVersion) store.schemaVersion = 1;
+
+// Миграция старого формата (checks/doneAt без months) -> months (v4)
+if (store.schemaVersion < 4){
+  const mk = store.activeMonth || currentMonthKey();
+  const checks = store.checks || {};
+  const doneAt = store.doneAt || {};
+
+  store.months = store.months || {};
+  store.months[mk] = store.months[mk] || { checks:{}, doneAt:{}, maxes: defaultMaxes() };
+  store.months[mk].checks = checks;
+  store.months[mk].doneAt = doneAt;
+
+  store.activeMonth = mk;
+
+  delete store.checks;
+  delete store.doneAt;
+
+  // вкладки по умолчанию
+  if (!store.activeGroup) store.activeGroup = "Грудь";
+  if (!store.activeExercise) store.activeExercise = "Жим лёжа";
+
+  store.schemaVersion = 4;
+  saveStore(store);
+}
+
+// Миграция названия: "Сгибания ног" -> "Сведение ног" (v5)
+if (store.schemaVersion < 5){
+  const OLD = "Сгибания ног";
+  const NEW = "Сведение ног";
+
+  if (store.months){
+    for (const mk of Object.keys(store.months)){
+      const mo = store.months[mk];
+      if (!mo || !mo.checks || !mo.doneAt) continue;
+
+      const newChecks = {};
+      for (const k of Object.keys(mo.checks)){
+        if (k.startsWith(OLD + "|")) newChecks[NEW + "|" + k.slice((OLD+"|").length)] = mo.checks[k];
+        else newChecks[k] = mo.checks[k];
+      }
+      mo.checks = newChecks;
+
+      const newDone = {};
+      for (const k of Object.keys(mo.doneAt)){
+        if (k.startsWith(OLD + "|")) newDone[NEW + "|" + k.slice((OLD+"|").length)] = mo.doneAt[k];
+        else newDone[k] = mo.doneAt[k];
+      }
+      mo.doneAt = newDone;
+    }
+  }
+
+  if (store.activeExercise === OLD) store.activeExercise = NEW;
+
+  store.schemaVersion = 5;
+  saveStore(store);
+}
+
+// гарантируем структуру
+if (!store.months) store.months = {};
+if (!store.activeMonth) store.activeMonth = currentMonthKey();
+if (!store.months[store.activeMonth]) store.months[store.activeMonth] = { checks:{}, doneAt:{}, maxes: defaultMaxes() };
+if (!store.months[store.activeMonth].maxes) store.months[store.activeMonth].maxes = defaultMaxes();
+
+function monthObj(){
+  if (!store.months[store.activeMonth]){
+    // новый месяц: копируем maxes из ближайшего прошлого, иначе дефолт
+    const keys = Object.keys(store.months).sort().reverse();
+    const prev = keys.find(k => k < store.activeMonth);
+    const base = prev ? store.months[prev].maxes : defaultMaxes();
+    store.months[store.activeMonth] = { checks:{}, doneAt:{}, maxes: JSON.parse(JSON.stringify(base)) };
+  }
+  const mo = store.months[store.activeMonth];
+  if (!mo.checks) mo.checks = {};
+  if (!mo.doneAt) mo.doneAt = {};
+  if (!mo.maxes) mo.maxes = defaultMaxes();
+  return mo;
+}
+
+/* =========================
+   3) ПЛАНЫ (динамические по maxes месяца)
+   Важное: дни недели НЕ используются.
+   День 1/2/3 — это порядок внутри недели:
+     День 1: Жим + Трицепс + Бицепс + Тяга верхнего блока
+     День 2: Жим + Ноги
+     День 3: Жим + Трицепс + Бицепс + Плечи
+========================= */
+
+// База жима: ваш исходный план при 1ПМ=90 (TM=81). Далее масштабируем по 1ПМ месяца.
+const BASE_BENCH_1RM = 90;
+const BASE_BENCH_TM = BASE_BENCH_1RM * 0.90;
+
+const BENCH_BASE = [
   { id:"1.1", sets:[ {w:60, r:3, n:1}, {w:70, r:2, n:2}, {w:77.5, r:1, n:2} ] },
   { id:"1.2", sets:[ {w:60, r:3, n:1}, {w:70, r:3, n:5} ] },
   { id:"1.3", sets:[ {w:60, r:3, n:1}, {w:75, r:3, n:4} ] },
@@ -404,46 +585,30 @@ const BENCH_PLAN = [
   { id:"4.3", sets:[ {w:70, r:4, n:3}, {w:80, r:3, n:3} ] },
 ];
 
-function makeGeneratedPlan({maxW, maxReps, inc, kind, freqPerWeek}){
+function buildBenchPlan(oneRM){
+  const TM = oneRM * 0.90;
+  const sessions = BENCH_BASE.map(s=>{
+    return {
+      id: s.id,
+      sets: s.sets.map(blk=>{
+        const pct = blk.w / BASE_BENCH_TM;
+        const w = roundTo(TM * pct, 2.5);
+        return { w, r: blk.r, n: blk.n };
+      })
+    };
+  });
+  return { sessions, meta: { oneRM, TM, maxW: oneRM, maxReps: 1, inc: 2.5 } };
+}
+
+function makePlanFromTemplates({maxW, maxReps, inc, templates}){
   const oneRM = (maxReps === 1) ? maxW : epley1RM(maxW, maxReps);
   const TM = oneRM * 0.90;
 
-  // Важно: проценты считаем от TM.
-  // arms2: 2 тренировки/нед (8 сессий за 4 недели)
-  // leg_*1: 1 тренировка/нед (4 сессии за 4 недели), больше повторений
-  const templates = {
-    arms2: {
-      "1.1":[ [0.50,12,1],[0.70, 8,4] ],
-      "1.2":[ [0.45,15,1],[0.60,12,4] ],
-
-      "2.1":[ [0.50,12,1],[0.75, 6,4],[0.825,4,2] ],
-      "2.2":[ [0.45,15,1],[0.65,10,4] ],
-
-      "3.1":[ [0.45,15,1],[0.65, 8,3] ],
-      "3.2":[ [0.40,20,1],[0.55,15,3] ],
-
-      "4.1":[ [0.50,12,1],[0.80, 5,4] ],
-      "4.2":[ [0.45,15,1],[0.70, 8,3] ],
-    },
-
-    leg_press1: {
-      "1.1":[ [0.40,15,1],[0.65,12,4],[0.75, 8,2] ],
-      "2.1":[ [0.40,12,1],[0.70,10,4],[0.80, 6,2] ],
-      "3.1":[ [0.35,20,1],[0.60,15,4] ],
-      "4.1":[ [0.40,12,1],[0.75, 8,4],[0.825,6,1] ],
-    },
-
-    leg_iso1: {
-      "1.1":[ [0.40,20,1],[0.60,15,4] ],
-      "2.1":[ [0.40,15,1],[0.65,12,4],[0.725,10,2] ],
-      "3.1":[ [0.35,25,1],[0.55,20,3] ],
-      "4.1":[ [0.40,15,1],[0.70,10,4] ],
-    }
-  };
-
-  const t = templates[kind];
-  const sessions = Object.keys(t).map(sid=>{
-    const blocks = t[sid].map(([pct, reps, n])=>{
+  const sessions = Object.keys(templates).sort((a,b)=>{
+    const pa = parseSid(a), pb = parseSid(b);
+    return pa.week !== pb.week ? pa.week - pb.week : pa.day - pb.day;
+  }).map(sid=>{
+    const blocks = templates[sid].map(([pct, reps, n])=>{
       let w = roundTo(TM * pct, inc);
       if (w < inc) w = inc;
       return { w, r: reps, n };
@@ -451,114 +616,220 @@ function makeGeneratedPlan({maxW, maxReps, inc, kind, freqPerWeek}){
     return { id: sid, sets: blocks };
   });
 
-  return { sessions, meta: { oneRM, TM, maxW, maxReps, inc, freqPerWeek } };
+  return { sessions, meta: { oneRM, TM, maxW, maxReps, inc } };
 }
 
-// Ваши максимумы
-const MAXES = {
-  triceps: { maxW: 40, maxReps: 6, inc: 2.5 },
-  biceps:  { maxW: 55, maxReps: 6, inc: 2.5 },
-  legpress:{ maxW: 170, maxReps: 4, inc: 5 },
-  legext:  { maxW: 55, maxReps: 6, inc: 2.5 },
-  legcurl: { maxW: 55, maxReps: 6, inc: 2.5 },
-};
+function buildPlansForMonth(mk){
+  const mo = store.months[mk] || { maxes: defaultMaxes() };
+  const mx = mo.maxes || defaultMaxes();
 
-const genTriceps = makeGeneratedPlan({ ...MAXES.triceps, kind:"arms2", freqPerWeek:2 });
-const genBiceps  = makeGeneratedPlan({ ...MAXES.biceps,  kind:"arms2", freqPerWeek:2 });
+  // Жим: 3/нед (1.1 / 1.2 / 1.3 и т.д.)
+  const bench = buildBenchPlan(Number(mx.bench1RM || 90));
 
-const genLegPress= makeGeneratedPlan({ ...MAXES.legpress,kind:"leg_press1", freqPerWeek:1 });
-const genLegExt  = makeGeneratedPlan({ ...MAXES.legext,  kind:"leg_iso1",   freqPerWeek:1 });
-const genLegCurl = makeGeneratedPlan({ ...MAXES.legcurl, kind:"leg_iso1",   freqPerWeek:1 });
+  // Руки: 2/нед — День 1 и День 3 (1.1, 1.3, 2.1, 2.3, ...)
+  // Важно: избегаем "тяжёлых" процентов, чтобы не конфликтовать с тяжёлым жимом.
+  const armsTemplates = {
+    // Week 1
+    "1.1":[ [0.50,12,1],[0.70,10,3],[0.75, 8,2] ],
+    "1.3":[ [0.45,15,1],[0.60,12,3],[0.65,10,2] ],
+    // Week 2 (немного плотнее на День 1, День 3 легче)
+    "2.1":[ [0.50,12,1],[0.72,10,3],[0.78, 6,3] ],
+    "2.3":[ [0.45,15,1],[0.62,12,3] ],
+    // Week 3 (разгрузка/объём)
+    "3.1":[ [0.45,15,1],[0.60,12,3] ],
+    "3.3":[ [0.40,20,1],[0.55,15,3] ],
+    // Week 4 (умеренно)
+    "4.1":[ [0.50,12,1],[0.70,10,3],[0.76, 8,2] ],
+    "4.3":[ [0.45,15,1],[0.62,12,3],[0.68,10,2] ],
+  };
 
-const PLANS = {
-  "Грудь": {
-    "Жим лёжа": { sessions: BENCH_PLAN, meta: { oneRM: BENCH_1RM, TM: BENCH_1RM*0.90, maxW: 90, maxReps: 1, inc: 2.5, freqPerWeek:3 } }
-  },
-  "Руки": {
-    "Трицепс": genTriceps,
-    "Бицепс (блок)": genBiceps
-  },
-  "Ноги": {
-    "Жим ногами": genLegPress,
-    "Разгибания ног": genLegExt,
-    "Сгибания ног": genLegCurl
-  }
-};
+  const triceps = makePlanFromTemplates({ ...mx.triceps, templates: armsTemplates });
+  const biceps  = makePlanFromTemplates({ ...mx.biceps,  templates: armsTemplates });
+
+  // Тяга верхнего блока: 1/нед — только День 1 (1.1, 2.1, 3.1, 4.1)
+  const pulldownTemplates = {
+    "1.1":[ [0.50,12,1],[0.70,10,4] ],
+    "2.1":[ [0.50,12,1],[0.75, 8,4] ],
+    "3.1":[ [0.45,15,1],[0.65,10,3] ],
+    "4.1":[ [0.50,12,1],[0.78, 8,4] ],
+  };
+  const pulldown = makePlanFromTemplates({ ...mx.pulldown, templates: pulldownTemplates });
+
+  // Ноги: 1/нед — только День 2 (1.2, 2.2, 3.2, 4.2)
+  // Правило: не делаем "тяжело" одновременно жим ногами + изоляцию
+  const legPressTemplates = {
+    "1.2":[ [0.40,15,1],[0.65,12,4],[0.72, 8,2] ],
+    "2.2":[ [0.40,12,1],[0.72,10,4],[0.80, 6,2] ], // тяжелее
+    "3.2":[ [0.35,20,1],[0.60,15,4] ],
+    "4.2":[ [0.40,12,1],[0.75, 8,4],[0.82, 6,1] ], // тяжелее
+  };
+  const legIsoTemplates = {
+    "1.2":[ [0.40,20,1],[0.65,12,4] ],
+    "2.2":[ [0.40,20,1],[0.60,15,4] ], // легче (в паре с тяжелее leg press)
+    "3.2":[ [0.35,25,1],[0.62,15,3] ],
+    "4.2":[ [0.40,20,1],[0.60,15,3] ], // легче (в паре с тяжелее leg press)
+  };
+
+  const legpress = makePlanFromTemplates({ ...mx.legpress, templates: legPressTemplates });
+  const legext   = makePlanFromTemplates({ ...mx.legext,   templates: legIsoTemplates });
+  const legadd   = makePlanFromTemplates({ ...mx.legadd,   templates: legIsoTemplates });
+
+  // Плечи: 1/нед — только День 3 (1.3,2.3,3.3,4.3), умеренно (без "убийства" жима)
+  const shoulderTemplates = {
+    "1.3":[ [0.50, 8,1],[0.65, 6,3],[0.70,5,2] ],
+    "2.3":[ [0.50, 8,1],[0.67, 6,3],[0.72,5,2] ],
+    "3.3":[ [0.45,10,1],[0.60, 8,3] ],
+    "4.3":[ [0.50, 8,1],[0.65, 6,3],[0.70,5,2] ],
+  };
+  const shoulder = makePlanFromTemplates({ ...mx.shoulder, templates: shoulderTemplates });
+
+  return {
+    "Грудь": {
+      "Жим лёжа": bench
+    },
+    "Руки": {
+      "Трицепс": triceps,
+      "Бицепс (блок)": biceps
+    },
+    "Спина": {
+      "Тяга верхнего блока": pulldown
+    },
+    "Ноги": {
+      "Жим ногами": legpress,
+      "Разгибания ног": legext,
+      "Сведение ног": legadd
+    },
+    "Плечи": {
+      "Жим на плечи": shoulder
+    }
+  };
+}
+
+function plans(){
+  return buildPlansForMonth(store.activeMonth);
+}
 
 /* =========================
-   2) ХРАНИЛИЩЕ + МИГРАЦИЯ
+   4) UI: месяц + максимумы
 ========================= */
-function loadStore(){
-  try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
-  catch { return {}; }
-}
-function saveStore(s){
-  localStorage.setItem(STORE_KEY, JSON.stringify(s));
-}
-function findDefault(){
-  const g = Object.keys(PLANS)[0];
-  const e = Object.keys(PLANS[g])[0];
-  return { g, e };
-}
-function findGroupForExercise(exName){
-  for (const g of Object.keys(PLANS)){
-    if (PLANS[g][exName]) return g;
+const $monthSel = document.getElementById("monthSel");
+const $maxForm = document.getElementById("maxForm");
+const $maxHint = document.getElementById("maxHint");
+
+function ensureActiveMonthExists(){
+  if (!store.months[store.activeMonth]){
+    const keys = Object.keys(store.months).sort().reverse();
+    const prev = keys.find(k => k < store.activeMonth);
+    const base = prev ? store.months[prev].maxes : defaultMaxes();
+    store.months[store.activeMonth] = { checks:{}, doneAt:{}, maxes: JSON.parse(JSON.stringify(base)) };
+    saveStore(store);
   }
-  return null;
-}
-function getSession(exName, sid){
-  for (const g of Object.keys(PLANS)){
-    const ex = PLANS[g][exName];
-    if (!ex) continue;
-    return ex.sessions.find(s=>s.id===sid) || null;
-  }
-  return null;
 }
 
-let store = loadStore();
-if (!store.checks) store.checks = {};
-if (!store.doneAt) store.doneAt = {};
-
-// миграция + авто-отметка 1.1–2.3 для жима
-if (!store.schemaVersion || store.schemaVersion < 2){
-  const prevEx = store.activeExercise;
-  const g = prevEx ? findGroupForExercise(prevEx) : null;
-  const def = findDefault();
-  store.activeGroup = g || def.g;
-  store.activeExercise = (prevEx && g) ? prevEx : def.e;
-
-  const exName = "Жим лёжа";
-  const completed = ["1.1","1.2","1.3","2.1","2.2","2.3"];
-  completed.forEach(sid=>{
-    const sess = getSession(exName, sid);
-    if (!sess) return;
-
-    const hasAny = Object.keys(store.checks).some(k => k.startsWith(`${exName}|${sid}|`));
-    if (!hasAny){
-      sess.sets.forEach((blk, bIdx)=>{
-        for (let i=0;i<blk.n;i++){
-          store.checks[keyCheck(exName, sid, bIdx, i)] = true;
-        }
-      });
-    }
-    store.doneAt[keySession(exName, sid)] = store.doneAt[keySession(exName, sid)] || todayISO();
+function renderMonthSelect(){
+  const options = lastNMonths(18);
+  $monthSel.innerHTML = "";
+  options.forEach(mk=>{
+    const opt = document.createElement("option");
+    opt.value = mk;
+    opt.textContent = monthLabel(mk);
+    if (mk === store.activeMonth) opt.selected = true;
+    $monthSel.appendChild(opt);
   });
 
-  store.schemaVersion = 2;
+  const isCurrent = store.activeMonth === currentMonthKey();
+  $maxHint.textContent = isCurrent
+    ? "Текущий месяц — предустановленные значения (заполнитель). Менять удобно со следующего месяца: выберите следующий месяц сверху, выставьте новые 1ПМ/максы и нажмите «Применить»."
+    : "Значения для выбранного месяца. Поменяли — нажмите «Применить», план пересчитается.";
+}
+
+function renderMaxForm(){
+  const mo = monthObj();
+  const mx = mo.maxes || defaultMaxes();
+  $maxForm.innerHTML = "";
+
+  function fieldNumber({id,label,value,step=1,min=0,max=1000,hint=""}){
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+    wrap.innerHTML = `
+      <div class="label">${label}</div>
+      <input class="inp" id="${id}" type="number" step="${step}" min="${min}" max="${max}" value="${value}">
+      ${hint ? `<div class="hint">${hint}</div>` : ``}
+    `;
+    $maxForm.appendChild(wrap);
+  }
+
+  // Жим 1ПМ
+  fieldNumber({
+    id:"mx_bench",
+    label:"Жим лёжа — 1ПМ (кг)",
+    value: mx.bench1RM ?? 90,
+    step: 2.5,
+    min: 20,
+    max: 300,
+    hint:"1ПМ месяца -> TM=90% -> веса жима пересчитываются."
+  });
+
+  function pair(prefix, title, obj, stepW){
+    fieldNumber({
+      id:`${prefix}_w`,
+      label:`${title} — макс вес (кг)`,
+      value: obj.maxW,
+      step: stepW,
+      min: 0,
+      max: 500,
+      hint:`Шаг веса в плане: ${stepW} кг`
+    });
+    fieldNumber({
+      id:`${prefix}_r`,
+      label:`${title} — макс повторы`,
+      value: obj.maxReps,
+      step: 1,
+      min: 1,
+      max: 30,
+      hint:`Оценка 1ПМ по Epley (если повторы > 1).`
+    });
+  }
+
+  pair("mx_tri", "Трицепс (тренажёр)", mx.triceps, 5);
+  pair("mx_bi",  "Бицепс (блок)",      mx.biceps,  5);
+  pair("mx_pd",  "Тяга верхнего блока",mx.pulldown,5);
+
+  pair("mx_lp",  "Жим ногами",         mx.legpress,5);
+  pair("mx_le",  "Разгибания ног",     mx.legext,  2.5);
+  pair("mx_la",  "Сведение ног",       mx.legadd,  2.5);
+
+  pair("mx_sh",  "Жим на плечи",       mx.shoulder,2.5);
+}
+
+function applyMaxFromForm(){
+  const mo = monthObj();
+  const mx = mo.maxes || defaultMaxes();
+
+  function num(id, fallback){
+    const el = document.getElementById(id);
+    const v = el ? Number(el.value) : NaN;
+    return Number.isFinite(v) ? v : fallback;
+  }
+
+  mx.bench1RM = num("mx_bench", mx.bench1RM);
+
+  mx.triceps = { maxW: num("mx_tri_w", mx.triceps.maxW), maxReps: num("mx_tri_r", mx.triceps.maxReps), inc: 5 };
+  mx.biceps  = { maxW: num("mx_bi_w",  mx.biceps.maxW),  maxReps: num("mx_bi_r",  mx.biceps.maxReps),  inc: 5 };
+  mx.pulldown= { maxW: num("mx_pd_w",  mx.pulldown.maxW),maxReps: num("mx_pd_r",  mx.pulldown.maxReps),inc: 5 };
+
+  mx.legpress= { maxW: num("mx_lp_w", mx.legpress.maxW), maxReps: num("mx_lp_r", mx.legpress.maxReps), inc: 5 };
+  mx.legext  = { maxW: num("mx_le_w", mx.legext.maxW),   maxReps: num("mx_le_r", mx.legext.maxReps),   inc: 2.5 };
+  mx.legadd  = { maxW: num("mx_la_w", mx.legadd.maxW),   maxReps: num("mx_la_r", mx.legadd.maxReps),   inc: 2.5 };
+
+  mx.shoulder= { maxW: num("mx_sh_w", mx.shoulder.maxW), maxReps: num("mx_sh_r", mx.shoulder.maxReps), inc: 2.5 };
+
+  mo.maxes = mx;
   saveStore(store);
 }
 
-if (!store.activeGroup || !PLANS[store.activeGroup]){
-  const def = findDefault();
-  store.activeGroup = def.g;
-}
-if (!store.activeExercise || !PLANS[store.activeGroup][store.activeExercise]){
-  store.activeExercise = Object.keys(PLANS[store.activeGroup])[0];
-}
-saveStore(store);
-
 /* =========================
-   3) ПРОГРЕСС И РЕНДЕР
+   5) РЕНДЕР (по упражнению)
 ========================= */
 const $groupSeg = document.getElementById("groupSeg");
 const $exerciseSeg = document.getElementById("exerciseSeg");
@@ -568,57 +839,63 @@ const $exMeta = document.getElementById("exMeta");
 const $exProgress = document.getElementById("exProgress");
 const $io = document.getElementById("io");
 
-function sessionStats(exName, sess){
-  let sets = 0, reps = 0, tonnage = 0, maxW = 0;
+function findDefault(pl){
+  const g = Object.keys(pl)[0];
+  const e = Object.keys(pl[g])[0];
+  return { g, e };
+}
+
+function validateActiveTabs(pl){
+  if (!store.activeGroup || !pl[store.activeGroup]){
+    const def = findDefault(pl);
+    store.activeGroup = def.g;
+  }
+  if (!store.activeExercise || !pl[store.activeGroup][store.activeExercise]){
+    store.activeExercise = Object.keys(pl[store.activeGroup])[0];
+  }
+  saveStore(store);
+}
+
+function sessionStats(mo, exName, sess){
+  let sets = 0, reps = 0, tonnage = 0;
   sess.sets.forEach((blk)=>{
     sets += blk.n;
     reps += blk.n * blk.r;
     tonnage += blk.n * blk.r * blk.w;
-    maxW = Math.max(maxW, blk.w);
   });
 
   let doneSets = 0;
   sess.sets.forEach((blk, bIdx)=>{
     for (let i=0;i<blk.n;i++){
-      if (store.checks[keyCheck(exName, sess.id, bIdx, i)]) doneSets++;
+      if (mo.checks[keyCheck(exName, sess.id, bIdx, i)]) doneSets++;
     }
   });
 
-  return { sets, reps, tonnage, maxW, doneSets };
+  return { sets, reps, tonnage, doneSets };
 }
-function isSessionDone(exName, sess){
-  const st = sessionStats(exName, sess);
+
+function isSessionDone(mo, exName, sess){
+  const st = sessionStats(mo, exName, sess);
   return st.sets > 0 && st.doneSets === st.sets;
 }
-function markSessionDoneDate(exName, sess){
+function markSessionDoneDate(mo, exName, sess){
   const k = keySession(exName, sess.id);
-  if (isSessionDone(exName, sess)){
-    store.doneAt[k] = store.doneAt[k] || todayISO();
+  if (isSessionDone(mo, exName, sess)){
+    mo.doneAt[k] = mo.doneAt[k] || todayISO();
   } else {
-    delete store.doneAt[k];
+    delete mo.doneAt[k];
   }
 }
 
-function exerciseTotals(exName){
-  const ex = PLANS[store.activeGroup][exName];
-  let total = 0, done = 0;
-  ex.sessions.forEach(s=>{
-    const st = sessionStats(exName, s);
-    total += st.sets;
-    done += st.doneSets;
-  });
-  return { total, done };
-}
-
-function renderGroupSeg(){
+function renderGroupSeg(pl){
   $groupSeg.innerHTML = "";
-  Object.keys(PLANS).forEach(g=>{
+  Object.keys(pl).forEach(g=>{
     const b = document.createElement("button");
     b.textContent = g;
     b.className = (g===store.activeGroup) ? "active" : "";
     b.onclick = ()=>{
       store.activeGroup = g;
-      store.activeExercise = Object.keys(PLANS[g])[0];
+      store.activeExercise = Object.keys(pl[g])[0];
       saveStore(store);
       renderAll();
     };
@@ -626,9 +903,9 @@ function renderGroupSeg(){
   });
 }
 
-function renderExerciseSeg(){
+function renderExerciseSeg(pl){
   $exerciseSeg.innerHTML = "";
-  Object.keys(PLANS[store.activeGroup]).forEach(ex=>{
+  Object.keys(pl[store.activeGroup]).forEach(ex=>{
     const b = document.createElement("button");
     b.textContent = ex;
     b.className = (ex===store.activeExercise) ? "active" : "";
@@ -641,25 +918,39 @@ function renderExerciseSeg(){
   });
 }
 
-function renderWeeks(){
+function renderWeeks(pl){
   $weeks.innerHTML = "";
+  const mo = monthObj();
+
+  const exGroup = store.activeGroup;
   const exName = store.activeExercise;
-  const ex = PLANS[store.activeGroup][exName];
+  const ex = pl[exGroup][exName];
   const meta = ex.meta;
 
   $exTitle.textContent = exName;
 
+  // мета-текст + пометка "предустановлено" для текущего месяца
+  const isCurrent = store.activeMonth === currentMonthKey();
+  const presetTag = isCurrent ? " • предустановлено" : "";
+
   let metaText = "";
   if (exName === "Жим лёжа"){
-    metaText = `1ПМ: ${meta.maxW} кг • TM≈${fmtWeight(meta.TM)} кг • 4 недели × ${meta.freqPerWeek} ${ruTrain(meta.freqPerWeek)}`;
+    metaText = `Месяц: ${monthLabel(store.activeMonth)}${presetTag} • 1ПМ: ${fmtWeight(meta.oneRM)} кг • TM≈${fmtWeight(meta.TM)} кг • 4 недели × 3 тренировки`;
   } else {
-    metaText = `Макс: ${meta.maxW}×${meta.maxReps} • оценка 1ПМ≈${fmtWeight(meta.oneRM)} • TM≈${fmtWeight(meta.TM)} • 4 недели × ${meta.freqPerWeek} ${ruTrain(meta.freqPerWeek)}`;
+    metaText = `Месяц: ${monthLabel(store.activeMonth)}${presetTag} • Макс: ${fmtWeight(meta.maxW)}×${meta.maxReps} • 1ПМ≈${fmtWeight(meta.oneRM)} • TM≈${fmtWeight(meta.TM)}`;
   }
   $exMeta.textContent = metaText;
 
-  const tot = exerciseTotals(exName);
-  $exProgress.textContent = `Прогресс: ${tot.done}/${tot.total} подходов`;
+  // прогресс
+  let total = 0, done = 0;
+  ex.sessions.forEach(s=>{
+    const st = sessionStats(mo, exName, s);
+    total += st.sets;
+    done += st.doneSets;
+  });
+  $exProgress.textContent = `Прогресс: ${done}/${total} подходов`;
 
+  // группировка по неделям
   const byWeek = new Map();
   ex.sessions.forEach(s=>{
     const w = parseSid(s.id).week || 0;
@@ -672,7 +963,7 @@ function renderWeeks(){
 
     let wTotal=0, wDone=0;
     sessions.forEach(s=>{
-      const st = sessionStats(exName, s);
+      const st = sessionStats(mo, exName, s);
       wTotal += st.sets;
       wDone += st.doneSets;
     });
@@ -686,9 +977,10 @@ function renderWeeks(){
     det.appendChild(sum);
 
     sessions.forEach(sess=>{
-      const st = sessionStats(exName, sess);
-      const done = (st.sets>0 && st.doneSets===st.sets);
-      const doneDate = store.doneAt[keySession(exName, sess.id)];
+      const st = sessionStats(mo, exName, sess);
+      const doneSess = isSessionDone(mo, exName, sess);
+      const doneDate = mo.doneAt[keySession(exName, sess.id)];
+      const dayNo = parseSid(sess.id).day;
 
       const wrap = document.createElement("div");
       wrap.className = "session";
@@ -699,7 +991,7 @@ function renderWeeks(){
 
       const left = document.createElement("div");
       left.innerHTML = `
-        <div class="sid">Тренировка ${parseSid(sess.id).day} <span class="muted2">(${sess.id})</span></div>
+        <div class="sid">День ${dayNo} <span class="muted2">(${sess.id})</span></div>
         <div class="stats">${st.doneSets}/${st.sets} подходов • ${st.reps} повторов • тоннаж ${fmtWeight(st.tonnage)} кг</div>
       `;
 
@@ -707,17 +999,17 @@ function renderWeeks(){
       right.className = "sessionBtns";
 
       const badge = document.createElement("div");
-      badge.className = "badge" + (done ? " done" : "");
-      badge.textContent = done ? `Выполнено${doneDate ? " • "+doneDate : ""}` : "Не выполнено";
+      badge.className = "badge" + (doneSess ? " done" : "");
+      badge.textContent = doneSess ? `Выполнено${doneDate ? " • "+doneDate : ""}` : "Не выполнено";
 
       const btnAll = document.createElement("button");
-      btnAll.className = "btn mini ok quickBtn";
+      btnAll.className = "btn mini ok";
       btnAll.textContent = "✓ всё";
       btnAll.onclick = ()=>{
         sess.sets.forEach((blk,bIdx)=>{
-          for(let i=0;i<blk.n;i++) store.checks[keyCheck(exName, sess.id, bIdx, i)] = true;
+          for(let i=0;i<blk.n;i++) mo.checks[keyCheck(exName, sess.id, bIdx, i)] = true;
         });
-        markSessionDoneDate(exName, sess);
+        markSessionDoneDate(mo, exName, sess);
         saveStore(store);
         renderAll();
       };
@@ -727,9 +1019,9 @@ function renderWeeks(){
       btnClear.textContent = "Сброс";
       btnClear.onclick = ()=>{
         sess.sets.forEach((blk,bIdx)=>{
-          for(let i=0;i<blk.n;i++) delete store.checks[keyCheck(exName, sess.id, bIdx, i)];
+          for(let i=0;i<blk.n;i++) delete mo.checks[keyCheck(exName, sess.id, bIdx, i)];
         });
-        delete store.doneAt[keySession(exName, sess.id)];
+        delete mo.doneAt[keySession(exName, sess.id)];
         saveStore(store);
         renderAll();
       };
@@ -761,11 +1053,11 @@ function renderWeeks(){
         for (let i=0;i<blk.n;i++){
           const c = document.createElement("div");
           const ck = keyCheck(exName, sess.id, bIdx, i);
-          c.className = "chk" + (store.checks[ck] ? " on" : "");
-          c.textContent = store.checks[ck] ? "✓" : (i+1);
+          c.className = "chk" + (mo.checks[ck] ? " on" : "");
+          c.textContent = mo.checks[ck] ? "✓" : (i+1);
           c.onclick = ()=>{
-            store.checks[ck] = !store.checks[ck];
-            markSessionDoneDate(exName, sess);
+            mo.checks[ck] = !mo.checks[ck];
+            markSessionDoneDate(mo, exName, sess);
             saveStore(store);
             renderAll();
           };
@@ -773,19 +1065,19 @@ function renderWeeks(){
         }
 
         const quick = document.createElement("button");
-        quick.className = "btn mini ok quickBtn";
+        quick.className = "btn mini ok";
         quick.textContent = "✓ все";
         quick.onclick = ()=>{
           let allOn = true;
           for (let i=0;i<blk.n;i++){
-            if (!store.checks[keyCheck(exName, sess.id, bIdx, i)]) { allOn=false; break; }
+            if (!mo.checks[keyCheck(exName, sess.id, bIdx, i)]) { allOn=false; break; }
           }
           for (let i=0;i<blk.n;i++){
             const ck = keyCheck(exName, sess.id, bIdx, i);
-            if (allOn) delete store.checks[ck];
-            else store.checks[ck] = true;
+            if (allOn) delete mo.checks[ck];
+            else mo.checks[ck] = true;
           }
-          markSessionDoneDate(exName, sess);
+          markSessionDoneDate(mo, exName, sess);
           saveStore(store);
           renderAll();
         };
@@ -805,11 +1097,15 @@ function renderWeeks(){
   });
 }
 
-function nextIncomplete(){
+/* =========================
+   6) КНОПКИ + I/O
+========================= */
+function nextIncomplete(pl){
+  const mo = monthObj();
   const exName = store.activeExercise;
-  const ex = PLANS[store.activeGroup][exName];
+  const ex = pl[store.activeGroup][exName];
   for (const s of ex.sessions){
-    if (!isSessionDone(exName, s)) return s.id;
+    if (!isSessionDone(mo, exName, s)) return s.id;
   }
   return null;
 }
@@ -819,38 +1115,58 @@ function scrollToSession(sid){
 }
 
 function renderAll(){
-  renderGroupSeg();
-  renderExerciseSeg();
-  renderWeeks();
+  ensureActiveMonthExists();
+  const pl = plans();
+  validateActiveTabs(pl);
+
+  renderMonthSelect();
+  renderMaxForm();
+
+  renderGroupSeg(pl);
+  renderExerciseSeg(pl);
+  renderWeeks(pl);
 }
 
-/* =========================
-   4) КНОПКИ + I/O
-========================= */
+$monthSel.onchange = ()=>{
+  store.activeMonth = $monthSel.value;
+  ensureActiveMonthExists();
+  saveStore(store);
+  renderAll();
+};
+
+document.getElementById("btnApplyMax").onclick = ()=>{
+  applyMaxFromForm();
+  renderAll();
+};
+
 document.getElementById("btnNext").onclick = ()=>{
-  const sid = nextIncomplete();
-  if (!sid) return alert("В этом упражнении всё отмечено как выполненное.");
+  const pl = plans();
+  const sid = nextIncomplete(pl);
+  if (!sid) return alert("В этом упражнении всё отмечено как выполненное (в выбранном месяце).");
   scrollToSession(sid);
 };
 
 document.getElementById("btnResetExercise").onclick = ()=>{
+  const mo = monthObj();
   const exName = store.activeExercise;
-  if (!confirm(`Сбросить отметки для упражнения "${exName}"?`)) return;
+  if (!confirm(`Сбросить отметки для упражнения "${exName}" за ${monthLabel(store.activeMonth)}?`)) return;
 
-  Object.keys(store.checks).forEach(k=>{
-    if (k.startsWith(exName + "|")) delete store.checks[k];
+  Object.keys(mo.checks).forEach(k=>{
+    if (k.startsWith(exName + "|")) delete mo.checks[k];
   });
-  Object.keys(store.doneAt).forEach(k=>{
-    if (k.startsWith(exName + "|")) delete store.doneAt[k];
+  Object.keys(mo.doneAt).forEach(k=>{
+    if (k.startsWith(exName + "|")) delete mo.doneAt[k];
   });
+
   saveStore(store);
   renderAll();
 };
 
 document.getElementById("btnResetAll").onclick = ()=>{
-  if (!confirm("Сбросить ВСЕ отметки по всем упражнениям?")) return;
-  store.checks = {};
-  store.doneAt = {};
+  if (!confirm("Сбросить ВСЕ отметки по всем месяцам и упражнениям?")) return;
+  store.months = {};
+  store.activeMonth = currentMonthKey();
+  store.months[store.activeMonth] = { checks:{}, doneAt:{}, maxes: defaultMaxes() };
   saveStore(store);
   renderAll();
 };
@@ -864,17 +1180,11 @@ document.getElementById("btnImport").onclick = ()=>{
     const incoming = JSON.parse($io.value || "{}");
     if (!incoming || typeof incoming !== "object") throw new Error("bad");
 
-    if (!incoming.checks) incoming.checks = {};
-    if (!incoming.doneAt) incoming.doneAt = {};
-    incoming.schemaVersion = 2;
-
-    if (!incoming.activeGroup || !PLANS[incoming.activeGroup]){
-      const def = findDefault();
-      incoming.activeGroup = def.g;
-    }
-    if (!incoming.activeExercise || !PLANS[incoming.activeGroup][incoming.activeExercise]){
-      incoming.activeExercise = Object.keys(PLANS[incoming.activeGroup])[0];
-    }
+    if (!incoming.schemaVersion) incoming.schemaVersion = 5;
+    if (!incoming.months) incoming.months = {};
+    if (!incoming.activeMonth) incoming.activeMonth = currentMonthKey();
+    if (!incoming.months[incoming.activeMonth]) incoming.months[incoming.activeMonth] = { checks:{}, doneAt:{}, maxes: defaultMaxes() };
+    if (!incoming.months[incoming.activeMonth].maxes) incoming.months[incoming.activeMonth].maxes = defaultMaxes();
 
     store = incoming;
     saveStore(store);
@@ -886,11 +1196,11 @@ document.getElementById("btnImport").onclick = ()=>{
 };
 
 /* =========================
-   5) PWA: service worker
+   7) PWA: service worker
 ========================= */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js?v=5").catch(()=>{});
+    navigator.serviceWorker.register("./sw.js?v=7").catch(()=>{});
   });
 }
 
