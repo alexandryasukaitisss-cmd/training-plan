@@ -1,4 +1,4 @@
-const CACHE = "training-pwa-v7";
+const CACHE = "training-pwa-v8";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./sw.js"];
 
 self.addEventListener("install", (e) => {
