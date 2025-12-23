@@ -1,4 +1,4 @@
-const CACHE = "training-pwa-v5";
+const CACHE = "training-pwa-v7";
 const ASSETS = ["./", "./index.html", "./manifest.json", "./sw.js"];
 
 self.addEventListener("install", (e) => {
@@ -15,8 +15,6 @@ self.addEventListener("activate", (e) => {
   self.clients.claim();
 });
 
-// HTML (navigate) — network-first, чтобы подтягивались изменения.
-// Остальное — cache-first.
 self.addEventListener("fetch", (e) => {
   const req = e.request;
 
