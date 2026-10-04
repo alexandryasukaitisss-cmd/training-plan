@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0b0c" />
+  <title>Тренировки — демонстрационный план</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <style>
+    :root{
+      --bg0:#0b0b0c;
+      --bg1:#111114;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(255,255,255,.04);
+      --border: rgba(255,255,255,.10);
+      --txt:#f3f3f4;
+      --muted: rgba(255,255,255,.65);
+      --muted2: rgba(255,255,255,.45);
+
+      --ok:#34c759;
+      --warn:#ff9f0a;
+      --bad:#ff3b30;
+
+      --r: 16px;
+      --tap: 52px;
+    }
+
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg0:#f3f4f7;
+        --bg1:#ffffff;
+        --card: rgba(255,255,255,.75);
+        --card2: rgba(255,255,255,.55);
+        --border: rgba(0,0,0,.08);
+        --txt:#111114;
+        --muted: rgba(0,0,0,.62);
+        --muted2: rgba(0,0,0,.45);
+      }
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display","SF Pro Text", Inter, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--txt);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(52,199,89,.16), transparent 55%),
+        radial-gradient(900px 700px at 85% 25%, rgba(0,122,255,.18), transparent 55%),
+        radial-gradient(900px 700px at 50% 95%, rgba(255,159,10,.14), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .wrap{max-width:980px; margin:0 auto; padding:18px 14px 28px}
+    header{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:14px;
+      padding:6px 2px 14px;
+      flex-wrap:wrap;
+    }
+    h1{margin:0; font-size:22px; font-weight:800; letter-spacing:.2px}
+    .sub{margin-top:6px; color:var(--muted); font-size:13px; line-height:1.35}
+
+    .topActions{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end}
+    .btn{
+      height:40px; padding:0 12px; border-radius:12px;
+      border:1px solid var(--border);
+      background: var(--card);
+      color:var(--txt); font-weight:800; cursor:pointer;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      white-space:nowrap;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn.ok{border-color: rgba(52,199,89,.35)}
+    .btn.bad{border-color: rgba(255,59,48,.35); color: var(--bad)}
+    .btn.mini{height:34px; border-radius:10px; padding:0 10px; font-weight:900; font-size:12px}
+
+    .picker{
+      display:inline-flex; align-items:center; gap:10px;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      width:max-content;
+      max-width:100%;
+    }
+    .pickerLabel{font-size:12px; color:var(--muted); font-weight:800}
+    select{
+      appearance:none;
+      -webkit-appearance:none;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.08);
+      color:var(--txt);
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:900;
+      outline:none;
+      max-width: 62vw;
+    }
+    @media (prefers-color-scheme: light){
+      select{ background: rgba(255,255,255,.55); }
+    }
+
+    .grid{
+      display:grid; grid-template-columns: 1fr; gap:12px;
+    }
+    @media (min-width:900px){
+      .grid{grid-template-columns: 1.25fr .75fr}
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding:14px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.18);
+    }
+
+    .rowBetween{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+    .title2{font-size:14px; font-weight:900; margin:0}
+    .mini{font-size:12px; color:var(--muted)}
+    .muted{color:var(--muted)}
+    .muted2{color:var(--muted2)}
+
+    .seg{
+      display:inline-flex; gap:0; border-radius:14px;
+      border:1px solid var(--border);
+      overflow:hidden;
+      background: rgba(0,0,0,.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      max-width:100%;
+    }
+    @media (prefers-color-scheme: light){
+      .seg{ background: rgba(255,255,255,.55); }
+    }
+    .seg button{
+      height:40px; padding:0 14px;
+      border:0; background:transparent; color:var(--txt);
+      font-weight:900; cursor:pointer;
+      white-space:nowrap;
+    }
+    .seg button.active{
+      background: rgba(255,255,255,.10);
+    }
+    @media (prefers-color-scheme: light){
+      .seg button.active{ background: rgba(0,0,0,.06); }
+    }
+
+    .controlsStack{display:flex; flex-direction:column; gap:10px}
+    .controlsRow{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+
+    details.week{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card2);
+      padding:10px;
+      margin-top:12px;
+    }
+    details.week summary{
+      list-style:none;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:6px 6px;
+      font-weight:900;
+      flex-wrap:wrap;
+    }
+    details.week summary::-webkit-details-marker{display:none}
+    .weekMeta{font-weight:800; color:var(--muted); font-size:12px; white-space:nowrap}
+
+    .session{
+      border:1px solid var(--border);
+      border-radius:14px;
+      background: var(--card);
+      padding:12px;
+      margin-top:10px;
+    }
+
+    .sessionHead{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      flex-wrap:wrap;
+    }
+    .sid{font-weight:1000; letter-spacing:.2px}
+    .stats{margin-top:3px; font-size:12px; color:var(--muted); line-height:1.35}
+    .sessionBtns{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+
+    .badge{
+      font-size:12px; padding:4px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      white-space:nowrap;
+      max-width:100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .badge.done{border-color: rgba(52,199,89,.35); color: var(--ok); background: rgba(52,199,89,.10);}
+
+    .exCard{
+      margin-top:10px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background: rgba(0,0,0,.06);
+      padding:10px;
+    }
+    @media (prefers-color-scheme: light){
+      .exCard{ background: rgba(255,255,255,.45); }
+    }
+    .exHead{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      flex-wrap:wrap;
+      padding:2px 2px 8px;
+    }
+    .exName{font-weight:1000; font-size:14px}
+    .exMeta{font-size:12px; color:var(--muted); line-height:1.35}
+    .exBtns{display:flex; gap:8px; flex-wrap:wrap}
+
+    .sets{margin-top:10px; display:flex; flex-direction:column; gap:8px}
+    .setRow{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px; border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.08);
+      min-height: var(--tap);
+    }
+    @media (prefers-color-scheme: light){
+      .setRow{ background: rgba(255,255,255,.55); }
+    }
+    .setLeft{display:flex; flex-direction:column; gap:2px; min-width: 40%}
+    .mainLine{font-weight:950}
+    .minorLine{font-size:12px; color:var(--muted); line-height:1.25}
+
+    .checks{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      align-items:center;
+      max-width: 58%;
+    }
+
+    .chk{
+      width:34px; height:34px; border-radius:10px;
+      border:1px solid var(--border);
+      display:grid; place-items:center;
+      cursor:pointer; user-select:none;
+      font-weight:1000;
+      background: rgba(255,255,255,.02);
+      font-size:12px;
+      flex: 0 0 auto;
+    }
+    .chk.on{
+      border-color: rgba(52,199,89,.45);
+      background: rgba(52,199,89,.14);
+      color: var(--ok);
+    }
+    .chk.quick{
+      width:auto;
+      min-width:56px;
+      padding:0 10px;
+      font-weight:1000;
+      border-color: rgba(52,199,89,.35);
+      background: rgba(52,199,89,.10);
+      color: var(--ok);
+    }
+
+    textarea{
+      width:100%; min-height:140px; resize:vertical;
+      background: var(--card2); color:var(--txt);
+      border:1px solid var(--border); border-radius:14px;
+      padding:10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
+    }
+
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0 8px;
+    }
+    .table td{vertical-align:middle}
+    .in{
+      width:100%;
+      height:36px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.08);
+      color:var(--txt);
+      padding:0 10px;
+      font-weight:900;
+      outline:none;
+    }
+    @media (prefers-color-scheme: light){
+      .in{ background: rgba(255,255,255,.55); }
+    }
+    .hint{font-size:11px; color:var(--muted2); line-height:1.35}
+    .hr{height:1px; background: var(--border); margin:12px 0}
+
+    /* iPhone узко */
+    @media (max-width:420px){
+      .wrap{padding:16px 12px 26px}
+      h1{font-size:20px}
+      .btn{height:38px}
+      .btn.mini{height:30px; font-size:11px; padding:0 9px}
+      .seg button{height:38px; padding:0 12px}
+      .chk{width:32px; height:32px; border-radius:9px; font-size:11px}
+      .chk.quick{min-width:50px; padding:0 8px}
+      .checks{max-width: 60%}
+    }
+
+    .errorBox{
+      margin-top:12px;
+      padding:12px;
+      border-radius:14px;
+      border:1px solid rgba(255,59,48,.35);
+      background: rgba(255,59,48,.10);
+      color: var(--txt);
+      display:none;
+      white-space:pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Тренировочный план</h1>
+      <div class="sub">
+        Демонстрационный шаблон не является персональной программой. Стартовые числа искусственные. Отметки сохраняются на устройстве (localStorage). Логика: <b>квадратик = подход</b>.
+      </div>
+
+      <div class="picker">
+        <div class="pickerLabel">Месяц</div>
+        <select id="monthSel"></select>
+      </div>
+    </div>
+
+    <div class="topActions">
+      <button class="btn ok" id="btnNext">Следующая</button>
+      <button class="btn bad" id="btnResetDay">Сброс дня</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT -->
+    <div class="card">
+      <div class="controlsStack">
+        <div class="controlsRow">
+          <div class="mini" style="min-width:64px;font-weight:900">Неделя:</div>
+          <div class="seg" id="weekSeg"></div>
+        </div>
+
+        <div class="controlsRow">
+          <div class="mini" style="min-width:64px;font-weight:900">День:</div>
+          <div class="seg" id="daySeg"></div>
+        </div>
+
+        <div class="mini" id="dayHint">—</div>
+      </div>
+
+      <div id="errorBox" class="errorBox"></div>
+      <div id="weeks"></div>
+
+      <div class="mini" style="margin-top:10px">
+        Подсказка: в каждой строке веса есть кнопка «все» — она отмечает/снимает все подходы этим весом.
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="card">
+      <div class="rowBetween">
+        <div>
+          <div class="title2">Максимумы на выбранный месяц</div>
+          <div class="mini">Можно менять со следующего месяца. Если не сохранять — будет “по умолчанию”.</div>
+        </div>
+        <div class="rowBetween" style="gap:8px">
+          <button class="btn mini ok" id="btnSaveMax">Сохранить</button>
+          <button class="btn mini bad" id="btnResetMonth">Сброс месяца</button>
+        </div>
+      </div>
+
+      <div style="height:8px"></div>
+      <table class="table" id="maxTable"></table>
+      <div class="hint" id="maxHint"></div>
+
+      <div class="hr"></div>
+
+      <div class="rowBetween">
+        <div>
+          <div class="title2">Экспорт / импорт</div>
+          <div class="mini">Для переноса отметок на другое устройство (копипаст JSON).</div>
+        </div>
+        <div class="rowBetween" style="gap:8px">
+          <button class="btn mini" id="btnExport">Экспорт</button>
+          <button class="btn mini" id="btnImport">Импорт</button>
+          <button class="btn mini bad" id="btnResetAll">Сброс всё</button>
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+      <textarea id="io" placeholder="Тут появится JSON (экспорт) / сюда вставьте JSON (импорт)"></textarea>
+
+      <div style="height:12px"></div>
+      <div class="title2">Схема дней (без привязки к Пн/Ср/Пт)</div>
+      <div class="mini" id="daySchemaText"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================
+   0) УТИЛИТЫ
+========================= */
+const APP_VERSION = "public-demo-2026-10-04";
+const STORE_KEY = "training_pwa_vA";
+
+function todayISO(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const da = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${da}`;
+}
+function monthKeyNow(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+}
+function roundTo(x, inc){
+  return Math.round(x / inc) * inc;
+}
+function fmtWeight(w){
+  if (!isFinite(w)) return "—";
+  const r = Math.round(w * 10) / 10;
+  if (Number.isInteger(r)) return String(r);
+  return String(r).replace(/\.0$/, "");
+}
+function epley1RM(w, reps){
+  if (!w || !reps) return 0;
+  if (reps <= 1) return w;
+  return w * (1 + reps/30);
+}
+function parseSid(sid){
+  const [w, d] = String(sid).split(".");
+  return { week: Number(w), day: Number(d) };
+}
+function sidOf(week, day){ return `${week}.${day}`; }
+
+function monthsForwardUntil(endKey){
+  const out = [];
+  const d = new Date();
+  d.setDate(1);
+
+  const [endY, endM] = endKey.split("-").map(Number);
+
+  while (true){
+    const y = d.getFullYear();
+    const m = d.getMonth() + 1;
+    const key = `${y}-${String(m).padStart(2,"0")}`;
+    out.push(key);
+
+    if (y > endY || (y === endY && m >= endM)) break;
+    d.setMonth(d.getMonth() + 1);
+  }
+  return out;
+}
+const RU_MONTHS = ["январь","февраль","март","апрель","май","июнь","июль","август","сентябрь","октябрь","ноябрь","декабрь"];
+function monthLabel(key){
+  const [y,m] = key.split("-").map(Number);
+  return `${RU_MONTHS[m-1]} ${y}`;
+}
+
+/* =========================
+   1) УПРАЖНЕНИЯ + ДНИ
+========================= */
+const EX = {
+  bench:     { id:"bench",     name:"Жим лёжа",            inc: 2.5, defaultMax:{w:10, reps:1},  dayMask:[1,2,3], kind:"bench" },
+  triceps:   { id:"triceps",   name:"Трицепс",             inc: 5,   defaultMax:{w:10, reps:1},  dayMask:[1,3],   kind:"arms_machine" },
+  biceps:    { id:"biceps",    name:"Бицепс (блок)",       inc: 5,   defaultMax:{w:10, reps:1},  dayMask:[1,3],   kind:"arms_machine" },
+  pulldown:  { id:"pulldown",  name:"Тяга верхнего блока", inc: 5,   defaultMax:{w:10, reps:1},  dayMask:[1],     kind:"back_machine" },
+  legpress:  { id:"legpress",  name:"Жим ногами",          inc: 5,   defaultMax:{w:10, reps:1},  dayMask:[2],     kind:"leg_press" },
+  legext:    { id:"legext",    name:"Разгибания ног",      inc: 5,   defaultMax:{w:10, reps:1},  dayMask:[2],     kind:"leg_iso" },
+  adduction: { id:"adduction", name:"Сведение ног",        inc: 5,   defaultMax:{w:10, reps:1},  dayMask:[2],     kind:"leg_iso" },
+  shoulder:  { id:"shoulder",  name:"Жим на плечи",        inc: 2.5, defaultMax:{w:10, reps:1},  dayMask:[3],     kind:"shoulder" },
+};
+
+const DAY_SCHEMA = {
+  1: { title:"День 1", text:"жим + трицепс + бицепс + тяга верхнего блока", exIds:["bench","triceps","biceps","pulldown"] },
+  2: { title:"День 2", text:"жим + жим ногами + разгибания + сведение",     exIds:["bench","legpress","legext","adduction"] },
+  3: { title:"День 3", text:"жим + трицепс + бицепс + жим на плечи",        exIds:["bench","triceps","biceps","shoulder"] },
+};
+
+/* =========================
+   2) ДЕМОНСТРАЦИОННЫЙ ПЛАН В ПРОЦЕНТАХ ОТ TM
+========================= */
+// Artificial percentages demonstrate the planner; this is not a personal program.
+const BENCH_PLAN_TM_PCTS = Array.from({length: 12}, (_, i) => ({
+  id: `${Math.floor(i / 3) + 1}.${i % 3 + 1}`,
+  sets: [{p: 0.50, r: 5, n: 1}, {p: i >= 9 ? 0.60 : 0.65 + (i % 3) * 0.10, r: 3, n: 3}]
+}));
+
+function benchLevelBySid(sid){
+  const sess = BENCH_PLAN_TM_PCTS.find(x => x.id === sid);
+  if (!sess) return "medium";
+  const maxP = Math.max(...sess.sets.map(b => b.p));
+  // “тяжесть” относительно TM:
+  // heavy: ~98% TM и выше, medium: ~88–98%, иначе light
+  if (maxP >= 0.98) return "heavy";
+  if (maxP >= 0.88) return "medium";
+  return "light";
+}
+
+/* =========================
+   3) ШАБЛОНЫ ДЛЯ ДРУГИХ УПРАЖНЕНИЙ
+   (учёт ограничений: тяжёлый жим ↔ не тяжёлые руки; ноги: не два тяжёлых сразу)
+========================= */
+const TPL = {
+  arms_machine: {
+    light:  [ [0.45,15,1], [0.60,12,2] ],
+    medium: [ [0.50,12,1], [0.70,10,3] ],
+    heavy:  [ [0.50,12,1], [0.75, 8,2], [0.85, 6,2] ],
+  },
+  back_machine: {
+    light:  [ [0.50,12,1], [0.65,10,2] ],
+    medium: [ [0.50,12,1], [0.70,10,3] ],
+    heavy:  [ [0.50,12,1], [0.75, 8,2], [0.85, 6,2] ],
+  },
+  shoulder: {
+    light:  [ [0.45,12,1], [0.60,10,2] ],
+    medium: [ [0.50,10,1], [0.70, 8,3] ],
+  },
+  leg_press: {
+    light:  [ [0.35,20,1], [0.55,15,2], [0.65,12,1] ],
+    medium: [ [0.35,20,1], [0.60,12,3], [0.70,10,1] ],
+    heavy:  [ [0.35,15,1], [0.65,12,2], [0.75,10,2], [0.85, 8,1] ],
+  },
+  leg_iso: {
+    light:  [ [0.35,20,1], [0.55,15,2] ],
+    medium: [ [0.40,18,1], [0.60,12,3] ],
+    heavy:  [ [0.40,15,1], [0.65,12,2], [0.75,10,2] ],
+  }
+};
+
+function invertLevel(benchLevel){
+  if (benchLevel === "heavy") return "light";
+  if (benchLevel === "medium") return "medium";
+  return "heavy";
+}
+function downshift(level){
+  if (level === "heavy") return "medium";
+  if (level === "medium") return "light";
+  return "light";
+}
+function legLevelsForWeek(weekNo, benchLevel){
+  // Не делаем два тяжёлых упражнения ног в одном дне.
+  // Фокус по неделям:
+  // W1: пресс medium, разгиб light, сведение medium
+  // W2: пресс medium, разгиб heavy, сведение light
+  // W3: пресс heavy, разгиб medium, сведение light  (часто совпадает с более “лёгким” жимом)
+  // W4: разгрузка: пресс light, разгиб medium, сведение light
+  let press = "medium", ext = "light", add = "medium";
+  if (weekNo === 2){ press = "medium"; ext = "heavy"; add = "light"; }
+  if (weekNo === 3){ press = "heavy";  ext = "medium"; add = "light"; }
+  if (weekNo === 4){ press = "light";  ext = "medium"; add = "light"; }
+
+  // Если вдруг жим на этот день оказался тяжёлым/средним — чуть приглушаем самый тяжёлый акцент
+  if (benchLevel === "heavy"){
+    if (press === "heavy") press = "medium";
+    if (ext === "heavy") ext = "medium";
+  }
+  return { press, ext, add };
+}
+
+/* =========================
+   4) ХРАНИЛИЩЕ + МИГРАЦИЯ
+========================= */
+function loadStore(){
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveStore(s){ localStorage.setItem(STORE_KEY, JSON.stringify(s)); }
+
+function keyCheck(monthKey, exId, sid, blockIdx, setIdx){
+  return `${monthKey}|${exId}|${sid}|${blockIdx}|${setIdx}`;
+}
+function keySession(monthKey, sid, day){
+  return `${monthKey}|${sid}|${day}`;
+}
+
+let store = loadStore();
+if (!store.schemaVersion) store.schemaVersion = 0;
+if (!store.checks) store.checks = {};
+if (!store.doneAt) store.doneAt = {};
+if (!store.activeMonth) store.activeMonth = monthKeyNow();
+if (!store.activeWeek) store.activeWeek = 0; // 0=все
+if (!store.activeDay) store.activeDay = 1;
+if (!store.maxByMonth) store.maxByMonth = {}; // month -> exId -> {w,reps}
+
+function effectiveMax(monthKey, exId){
+  const ex = EX[exId];
+  const m = store.maxByMonth?.[monthKey]?.[exId];
+  return m ? { w:Number(m.w)||0, reps:Number(m.reps)||1 } : { ...ex.defaultMax };
+}
+function isCustomMax(monthKey, exId){
+  return !!store.maxByMonth?.[monthKey]?.[exId];
+}
+
+/* Миграция со старого формата (если он был) */
+(function migrate(){
+  const currentMonth = store.activeMonth || monthKeyNow();
+
+  // schemaVersion 0/1/2 → 3: добавляем monthKey + переводим "Жим лёжа" → bench
+  if (store.schemaVersion < 3){
+    const newChecks = {};
+    const newDoneAt = {};
+
+    const mapExNameToId = (name) => {
+      if (name === "Жим лёжа") return "bench";
+      if (name === "Трицепс") return "triceps";
+      if (name === "Бицепс (блок)") return "biceps";
+      if (name === "Тяга верхнего блока") return "pulldown";
+      if (name === "Жим ногами") return "legpress";
+      if (name === "Разгибания ног") return "legext";
+      if (name === "Сгибания ног") return "adduction";
+      if (name === "Сведение ног") return "adduction";
+      if (name === "Жим на плечи") return "shoulder";
+      return null;
+    };
+
+    // checks
+    for (const k of Object.keys(store.checks || {})){
+      // старый ключ мог быть "Жим лёжа|1.1|0|0"
+      const parts = String(k).split("|");
+      if (parts.length >= 4 && !/^\d{4}-\d{2}$/.test(parts[0])){
+        const oldName = parts[0];
+        const sid = parts[1];
+        const b = parts[2];
+        const i = parts[3];
+        const exId = mapExNameToId(oldName);
+        if (exId){
+          const nk = keyCheck(currentMonth, exId, sid, b, i);
+          newChecks[nk] = !!store.checks[k];
+          continue;
+        }
+      }
+      // уже новый или неизвестный — оставим как есть (на всякий)
+      newChecks[k] = store.checks[k];
+    }
+
+    // doneAt (старый мог быть "Жим лёжа|1.1")
+    for (const k of Object.keys(store.doneAt || {})){
+      const parts = String(k).split("|");
+      if (parts.length === 2 && !/^\d{4}-\d{2}$/.test(parts[0])){
+        const exId = mapExNameToId(parts[0]);
+        const sid = parts[1];
+        if (exId){
+          // в новой схеме doneAt можно хранить просто по "month|exId|sid"
+          const nk = `${currentMonth}|${exId}|${sid}`;
+          newDoneAt[nk] = store.doneAt[k];
+          continue;
+        }
+      }
+      newDoneAt[k] = store.doneAt[k];
+    }
+
+    store.checks = newChecks;
+    store.doneAt = newDoneAt;
+
+    // дефолты UI
+    store.activeWeek = store.activeWeek || 0;
+    store.activeDay = store.activeDay || 1;
+    store.schemaVersion = 3;
+    saveStore(store);
+  }
+
+  // Fresh installs start with no completed workouts.
+
+})();
+
+/* =========================
+   5) ГЕНЕРАЦИЯ СЕССИЙ (под месяц + выбранный день/неделю)
+========================= */
+function calcMetaForExercise(monthKey, exId){
+  const ex = EX[exId];
+  const mx = effectiveMax(monthKey, exId);
+  const oneRM = epley1RM(mx.w, mx.reps);
+  const TM = oneRM * 0.90;
+  return { ...mx, oneRM, TM, inc: ex.inc };
+}
+
+function buildBlocksFromTpl(TM, inc, tpl){
+  return tpl.map(([pct, reps, n])=>{
+    let w = roundTo(TM * pct, inc);
+    if (w < inc) w = inc;
+    return { w, r: reps, n };
+  });
+}
+
+function benchBlocksForMonth(monthKey, sid){
+  const meta = calcMetaForExercise(monthKey, "bench");
+  const sess = BENCH_PLAN_TM_PCTS.find(s => s.id === sid);
+  if (!sess) return [];
+  return sess.sets.map(b => ({
+    w: Math.max(meta.inc, roundTo(meta.TM * b.p, meta.inc)),
+    r: b.r,
+    n: b.n
+  }));
+}
+
+function levelForExerciseOnSid(exId, sid){
+  const { week, day } = parseSid(sid);
+  const benchLevel = benchLevelBySid(sid);
+
+  if (exId === "bench") return benchLevel;
+
+  // День 1/3: руки + (в день 1 ещё тяга)
+  if (exId === "triceps" || exId === "biceps" || exId === "pulldown"){
+    // Нельзя тяжёлый жим + тяжёлые руки/спина
+    return invertLevel(benchLevel); // heavy bench->light arms; light bench->heavy arms
+  }
+
+  // День 3: плечи — на тяжёлом жиме делаем лёгко
+  if (exId === "shoulder"){
+    if (benchLevel === "heavy") return "light";
+    if (benchLevel === "medium") return "medium";
+    return "medium";
+  }
+
+  // День 2: ноги — распределяем тяжесть по упражнениям
+  if (exId === "legpress" || exId === "legext" || exId === "adduction"){
+    const lv = legLevelsForWeek(week, benchLevel);
+    if (exId === "legpress") return lv.press;
+    if (exId === "legext") return lv.ext;
+    return lv.add;
+  }
+
+  return "medium";
+}
+
+function blocksForExerciseOnSid(monthKey, exId, sid){
+  if (exId === "bench") return benchBlocksForMonth(monthKey, sid);
+
+  const ex = EX[exId];
+  const meta = calcMetaForExercise(monthKey, exId);
+  const level = levelForExerciseOnSid(exId, sid);
+
+  const kind = ex.kind;
+  let tpl = null;
+
+  if (kind === "arms_machine") tpl = TPL.arms_machine[level] || TPL.arms_machine.medium;
+  if (kind === "back_machine") tpl = TPL.back_machine[level] || TPL.back_machine.medium;
+  if (kind === "shoulder"){
+    tpl = (level === "light") ? TPL.shoulder.light : TPL.shoulder.medium;
+  }
+  if (kind === "leg_press") tpl = TPL.leg_press[level] || TPL.leg_press.medium;
+  if (kind === "leg_iso") tpl = TPL.leg_iso[level] || TPL.leg_iso.medium;
+
+  // страховка
+  if (!tpl) tpl = [ [0.50,12,1],[0.70,10,3] ];
+
+  return buildBlocksFromTpl(meta.TM, meta.inc, tpl);
+}
+
+function sessionExercisesForDay(day){
+  return DAY_SCHEMA[day].exIds.slice();
+}
+
+function sessionStats(monthKey, exId, sid, blocks){
+  let sets = 0, reps = 0, tonnage = 0, maxW = 0, doneSets = 0;
+  blocks.forEach((blk, bIdx)=>{
+    sets += blk.n;
+    reps += blk.n * blk.r;
+    tonnage += blk.n * blk.r * blk.w;
+    maxW = Math.max(maxW, blk.w);
+    for (let i=0;i<blk.n;i++){
+      if (store.checks[keyCheck(monthKey, exId, sid, bIdx, i)]) doneSets++;
+    }
+  });
+  return { sets, reps, tonnage, maxW, doneSets };
+}
+
+function isExerciseDone(monthKey, exId, sid, blocks){
+  const st = sessionStats(monthKey, exId, sid, blocks);
+  return st.sets > 0 && st.doneSets === st.sets;
+}
+
+function isSessionDone(monthKey, day, sid, sessionData){
+  // sessionData: array {exId, blocks}
+  let total=0, done=0;
+  sessionData.forEach(x=>{
+    const st = sessionStats(monthKey, x.exId, sid, x.blocks);
+    total += st.sets;
+    done  += st.doneSets;
+  });
+  return total > 0 && done === total;
+}
+
+function markDoneDateIfNeeded(monthKey, exId, sid, blocks){
+  const k = `${monthKey}|${exId}|${sid}`;
+  if (isExerciseDone(monthKey, exId, sid, blocks)){
+    store.doneAt[k] = store.doneAt[k] || todayISO();
+  } else {
+    delete store.doneAt[k];
+  }
+}
+
+function buildSession(monthKey, day, sid){
+  const exIds = sessionExercisesForDay(day);
+  return exIds.map(exId => ({
+    exId,
+    blocks: blocksForExerciseOnSid(monthKey, exId, sid),
+    meta: calcMetaForExercise(monthKey, exId),
+  }));
+}
+
+/* =========================
+   6) UI: РЕНДЕР
+========================= */
+const $monthSel = document.getElementById("monthSel");
+const $weekSeg  = document.getElementById("weekSeg");
+const $daySeg   = document.getElementById("daySeg");
+const $dayHint  = document.getElementById("dayHint");
+const $weeks    = document.getElementById("weeks");
+const $io       = document.getElementById("io");
+const $maxTable = document.getElementById("maxTable");
+const $maxHint  = document.getElementById("maxHint");
+const $daySchemaText = document.getElementById("daySchemaText");
+const $errorBox = document.getElementById("errorBox");
+
+function showError(err){
+  $errorBox.style.display = "block";
+  $errorBox.textContent = String(err && (err.stack || err.message || err) || "Unknown error");
+}
+
+window.addEventListener("error", (e)=>{ showError(e.error || e.message); });
+
+function renderMonthSelect(){
+  const options = monthsForwardUntil("2026-12");
+  $monthSel.innerHTML = "";
+  options.forEach(k=>{
+    const o = document.createElement("option");
+    o.value = k;
+    o.textContent = monthLabel(k);
+    $monthSel.appendChild(o);
+  });
+
+  // если активный месяц вне списка (теоретически), ставим текущий
+  if (![...options].includes(store.activeMonth)){
+    store.activeMonth = monthKeyNow();
+    saveStore(store);
+  }
+  $monthSel.value = store.activeMonth;
+
+  $monthSel.onchange = ()=>{
+    store.activeMonth = $monthSel.value;
+    saveStore(store);
+    renderAll();
+  };
+}
+
+function segButton(text, active, onClick){
+  const b = document.createElement("button");
+  b.textContent = text;
+  b.className = active ? "active" : "";
+  b.onclick = onClick;
+  return b;
+}
+
+function renderWeekSeg(){
+  $weekSeg.innerHTML = "";
+  const items = [
+    {v:0, t:"Все"},
+    {v:1, t:"1"},
+    {v:2, t:"2"},
+    {v:3, t:"3"},
+    {v:4, t:"4"},
+  ];
+  items.forEach(it=>{
+    $weekSeg.appendChild(segButton(it.t, store.activeWeek===it.v, ()=>{
+      store.activeWeek = it.v;
+      saveStore(store);
+      renderAll();
+    }));
+  });
+}
+
+function renderDaySeg(){
+  $daySeg.innerHTML = "";
+  [1,2,3].forEach(d=>{
+    $daySeg.appendChild(segButton(DAY_SCHEMA[d].title, store.activeDay===d, ()=>{
+      store.activeDay = d;
+      saveStore(store);
+      renderAll();
+    }));
+  });
+}
+
+function renderDayText(){
+  const d = DAY_SCHEMA[store.activeDay];
+  $dayHint.textContent = `Сейчас: ${d.title} — ${d.text}. (Неделя — это фильтр отображения.)`;
+  $daySchemaText.textContent = `День 1: ${DAY_SCHEMA[1].text}. День 2: ${DAY_SCHEMA[2].text}. День 3: ${DAY_SCHEMA[3].text}.`;
+}
+
+function renderMaxTable(){
+  const monthKey = store.activeMonth;
+  $maxTable.innerHTML = "";
+
+  const rows = Object.keys(EX).map(exId=>{
+    const ex = EX[exId];
+    const eff = effectiveMax(monthKey, exId);
+    const meta = calcMetaForExercise(monthKey, exId);
+
+    const tr = document.createElement("tr");
+
+    const td0 = document.createElement("td");
+    td0.style.width = "42%";
+    td0.innerHTML = `<div style="font-weight:1000">${ex.name}</div>
+      <div class="hint">шаг: ${fmtWeight(ex.inc)} кг • ${isCustomMax(monthKey,exId) ? "сохранено" : "по умолчанию"}</div>`;
+    tr.appendChild(td0);
+
+    const td1 = document.createElement("td");
+    td1.style.width = "25%";
+    td1.innerHTML = `<div class="hint">вес</div><input class="in" inputmode="decimal" id="mx_w_${exId}" value="${eff.w}">`;
+    tr.appendChild(td1);
+
+    const td2 = document.createElement("td");
+    td2.style.width = "16%";
+    const repsDisabled = (exId==="bench" || exId==="pulldown" || exId==="shoulder") ? "disabled" : "";
+    td2.innerHTML = `<div class="hint">повт.</div><input class="in" inputmode="numeric" id="mx_r_${exId}" value="${eff.reps}" ${repsDisabled}>`;
+    tr.appendChild(td2);
+
+    const td3 = document.createElement("td");
+    td3.style.width = "17%";
+    td3.innerHTML = `<div class="hint">оценка</div>
+      <div style="font-weight:1000">${fmtWeight(meta.oneRM)} 1ПМ</div>
+      <div class="hint">TM≈${fmtWeight(meta.TM)}</div>`;
+    tr.appendChild(td3);
+
+    $maxTable.appendChild(tr);
+  });
+
+  const monthIsCustomAny = Object.keys(EX).some(exId => isCustomMax(monthKey, exId));
+  $maxHint.textContent = monthIsCustomAny
+    ? "Для этого месяца есть сохранённые максимумы. Можно сбросить (к умолчанию) кнопкой «Сброс месяца»."
+    : "Сейчас всё “по умолчанию” (предустановленный заполнитель). Если нажмёте «Сохранить» — значения закрепятся для этого месяца.";
+}
+
+function clearError(){
+  $errorBox.style.display = "none";
+  $errorBox.textContent = "";
+}
+
+function renderWeeks(){
+  $weeks.innerHTML = "";
+  clearError();
+
+  const monthKey = store.activeMonth;
+  const day = store.activeDay;
+
+  const weeksToShow = (store.activeWeek === 0) ? [1,2,3,4] : [store.activeWeek];
+
+  weeksToShow.forEach(weekNo=>{
+    const sid = sidOf(weekNo, day);
+    const sessionData = buildSession(monthKey, day, sid);
+
+    // прогресс недели (тут фактически “тренировка недели X, день Y”)
+    let total=0, done=0, totalReps=0, totalTonnage=0;
+    sessionData.forEach(x=>{
+      const st = sessionStats(monthKey, x.exId, sid, x.blocks);
+      total += st.sets;
+      done  += st.doneSets;
+      totalReps += st.reps;
+      totalTonnage += st.tonnage;
+    });
+    const allDone = (total>0 && done===total);
+    const doneDate = store.doneAt[`${monthKey}|bench|${sid}`] || ""; // ориентир (по жиму)
+
+    const det = document.createElement("details");
+    det.className = "week";
+    det.open = true;
+
+    const sum = document.createElement("summary");
+    sum.innerHTML = `<div>Неделя ${weekNo}</div><div class="weekMeta">${done}/${total} подходов</div>`;
+    det.appendChild(sum);
+
+    const wrap = document.createElement("div");
+    wrap.className = "session";
+    wrap.dataset.sid = sid;
+
+    const head = document.createElement("div");
+    head.className = "sessionHead";
+
+    const left = document.createElement("div");
+    left.innerHTML = `
+      <div class="sid">${DAY_SCHEMA[day].title} <span class="muted2">(${sid})</span></div>
+      <div class="stats">${done}/${total} подходов • ${totalReps} повторов • тоннаж ${fmtWeight(totalTonnage)} кг</div>
+    `;
+
+    const right = document.createElement("div");
+    right.className = "sessionBtns";
+
+    const badge = document.createElement("div");
+    badge.className = "badge" + (allDone ? " done" : "");
+    badge.textContent = allDone ? `Выполнено${doneDate ? " • "+doneDate : ""}` : "Не выполнено";
+
+    const btnAll = document.createElement("button");
+    btnAll.className = "btn mini ok";
+    btnAll.textContent = "✓ всё";
+    btnAll.onclick = ()=>{
+      sessionData.forEach(x=>{
+        x.blocks.forEach((blk, bIdx)=>{
+          for (let i=0;i<blk.n;i++){
+            store.checks[keyCheck(monthKey, x.exId, sid, bIdx, i)] = true;
+          }
+        });
+        store.doneAt[`${monthKey}|${x.exId}|${sid}`] = store.doneAt[`${monthKey}|${x.exId}|${sid}`] || todayISO();
+      });
+      saveStore(store);
+      renderAll();
+    };
+
+    const btnClear = document.createElement("button");
+    btnClear.className = "btn mini bad";
+    btnClear.textContent = "Сброс";
+    btnClear.onclick = ()=>{
+      sessionData.forEach(x=>{
+        x.blocks.forEach((blk, bIdx)=>{
+          for (let i=0;i<blk.n;i++){
+            delete store.checks[keyCheck(monthKey, x.exId, sid, bIdx, i)];
+          }
+        });
+        delete store.doneAt[`${monthKey}|${x.exId}|${sid}`];
+      });
+      saveStore(store);
+      renderAll();
+    };
+
+    right.appendChild(badge);
+    right.appendChild(btnAll);
+    right.appendChild(btnClear);
+
+    head.appendChild(left);
+    head.appendChild(right);
+    wrap.appendChild(head);
+
+    // упражнения
+    sessionData.forEach(x=>{
+      const ex = EX[x.exId];
+      const st = sessionStats(monthKey, x.exId, sid, x.blocks);
+      const doneEx = (st.sets>0 && st.doneSets===st.sets);
+      const exDoneDate = store.doneAt[`${monthKey}|${x.exId}|${sid}`];
+
+      const exCard = document.createElement("div");
+      exCard.className = "exCard";
+
+      const exHead = document.createElement("div");
+      exHead.className = "exHead";
+
+      const exLeft = document.createElement("div");
+      exLeft.innerHTML = `
+        <div class="exName">${ex.name}</div>
+        <div class="exMeta">
+          TM≈${fmtWeight(x.meta.TM)} • 1ПМ≈${fmtWeight(x.meta.oneRM)} • шаг ${fmtWeight(ex.inc)} кг • ${st.doneSets}/${st.sets} подходов
+        </div>
+      `;
+
+      const exRight = document.createElement("div");
+      exRight.className = "exBtns";
+
+      const b = document.createElement("div");
+      b.className = "badge" + (doneEx ? " done" : "");
+      b.textContent = doneEx ? `Готово${exDoneDate ? " • "+exDoneDate : ""}` : "—";
+
+      const exReset = document.createElement("button");
+      exReset.className = "btn mini bad";
+      exReset.textContent = "Сброс";
+      exReset.onclick = ()=>{
+        x.blocks.forEach((blk,bIdx)=>{
+          for (let i=0;i<blk.n;i++) delete store.checks[keyCheck(monthKey,x.exId,sid,bIdx,i)];
+        });
+        delete store.doneAt[`${monthKey}|${x.exId}|${sid}`];
+        saveStore(store);
+        renderAll();
+      };
+
+      exRight.appendChild(b);
+      exRight.appendChild(exReset);
+
+      exHead.appendChild(exLeft);
+      exHead.appendChild(exRight);
+
+      const sets = document.createElement("div");
+      sets.className = "sets";
+
+      x.blocks.forEach((blk, bIdx)=>{
+        const row = document.createElement("div");
+        row.className = "setRow";
+
+        const l = document.createElement("div");
+        l.className = "setLeft";
+        l.innerHTML = `
+          <div class="mainLine">${fmtWeight(blk.w)} × ${blk.r}</div>
+          <div class="minorLine">${blk.n} подход(а/ов) • всего ${blk.n*blk.r} повторов</div>
+        `;
+
+        const r = document.createElement("div");
+        r.className = "checks";
+
+        for (let i=0;i<blk.n;i++){
+          const c = document.createElement("div");
+          const ck = keyCheck(monthKey, x.exId, sid, bIdx, i);
+          c.className = "chk" + (store.checks[ck] ? " on" : "");
+          c.textContent = store.checks[ck] ? "✓" : (i+1);
+          c.onclick = ()=>{
+            store.checks[ck] = !store.checks[ck];
+            markDoneDateIfNeeded(monthKey, x.exId, sid, x.blocks);
+            saveStore(store);
+            renderAll();
+          };
+          r.appendChild(c);
+        }
+
+        const quick = document.createElement("div");
+        quick.className = "chk quick";
+        quick.textContent = "все";
+        quick.onclick = ()=>{
+          let allOn = true;
+          for (let i=0;i<blk.n;i++){
+            if (!store.checks[keyCheck(monthKey, x.exId, sid, bIdx, i)]) { allOn=false; break; }
+          }
+          for (let i=0;i<blk.n;i++){
+            const ck = keyCheck(monthKey, x.exId, sid, bIdx, i);
+            if (allOn) delete store.checks[ck];
+            else store.checks[ck] = true;
+          }
+          markDoneDateIfNeeded(monthKey, x.exId, sid, x.blocks);
+          saveStore(store);
+          renderAll();
+        };
+        r.appendChild(quick);
+
+        row.appendChild(l);
+        row.appendChild(r);
+        sets.appendChild(row);
+      });
+
+      exCard.appendChild(exHead);
+      exCard.appendChild(sets);
+      wrap.appendChild(exCard);
+    });
+
+    det.appendChild(wrap);
+    $weeks.appendChild(det);
+  });
+}
+
+function nextIncompleteSid(){
+  const monthKey = store.activeMonth;
+  const day = store.activeDay;
+  const weeks = (store.activeWeek === 0) ? [1,2,3,4] : [store.activeWeek];
+
+  for (const w of weeks){
+    const sid = sidOf(w, day);
+    const sessionData = buildSession(monthKey, day, sid);
+    let total=0, done=0;
+    sessionData.forEach(x=>{
+      const st = sessionStats(monthKey, x.exId, sid, x.blocks);
+      total += st.sets;
+      done += st.doneSets;
+    });
+    if (total > 0 && done < total) return sid;
+  }
+  return null;
+}
+
+function scrollToSid(sid){
+  const el = document.querySelector(`.session[data-sid="${sid}"]`);
+  if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function renderAll(){
+  try{
+    renderMonthSelect();
+    renderWeekSeg();
+    renderDaySeg();
+    renderDayText();
+    renderMaxTable();
+    renderWeeks();
+  }catch(e){
+    showError(e);
+  }
+}
+
+/* =========================
+   7) КНОПКИ
+========================= */
+document.getElementById("btnNext").onclick = ()=>{
+  const sid = nextIncompleteSid();
+  if (!sid) return alert("В выбранном дне всё отмечено как выполненное.");
+  scrollToSid(sid);
+};
+
+document.getElementById("btnResetDay").onclick = ()=>{
+  const monthKey = store.activeMonth;
+  const day = store.activeDay;
+  if (!confirm(`Сбросить отметки для ${DAY_SCHEMA[day].title} за ${monthLabel(monthKey)}?`)) return;
+
+  for (let w=1; w<=4; w++){
+    const sid = sidOf(w, day);
+    const sessionData = buildSession(monthKey, day, sid);
+    sessionData.forEach(x=>{
+      x.blocks.forEach((blk,bIdx)=>{
+        for (let i=0;i<blk.n;i++){
+          delete store.checks[keyCheck(monthKey, x.exId, sid, bIdx, i)];
+        }
+      });
+      delete store.doneAt[`${monthKey}|${x.exId}|${sid}`];
+    });
+  }
+  saveStore(store);
+  renderAll();
+};
+
+document.getElementById("btnSaveMax").onclick = ()=>{
+  const monthKey = store.activeMonth;
+  if (!store.maxByMonth[monthKey]) store.maxByMonth[monthKey] = {};
+
+  Object.keys(EX).forEach(exId=>{
+    const w = Number(document.getElementById(`mx_w_${exId}`).value || 0);
+    const rEl = document.getElementById(`mx_r_${exId}`);
+    const reps = Number((rEl && !rEl.disabled) ? (rEl.value || 1) : effectiveMax(monthKey, exId).reps);
+
+    store.maxByMonth[monthKey][exId] = { w, reps };
+  });
+
+  saveStore(store);
+  renderAll();
+  alert("Максимумы сохранены для выбранного месяца.");
+};
+
+document.getElementById("btnResetMonth").onclick = ()=>{
+  const monthKey = store.activeMonth;
+  if (!confirm(`Сбросить сохранённые максимумы (и отметки) за ${monthLabel(monthKey)}?`)) return;
+
+  // удалить максимумы месяца
+  delete store.maxByMonth[monthKey];
+
+  // удалить отметки месяца
+  Object.keys(store.checks).forEach(k=>{
+    if (k.startsWith(monthKey + "|")) delete store.checks[k];
+  });
+  Object.keys(store.doneAt).forEach(k=>{
+    if (k.startsWith(monthKey + "|")) delete store.doneAt[k];
+  });
+
+  saveStore(store);
+  renderAll();
+};
+
+document.getElementById("btnResetAll").onclick = ()=>{
+  if (!confirm("Сбросить ВСЕ отметки по всем месяцам?")) return;
+  store.checks = {};
+  store.doneAt = {};
+  saveStore(store);
+  renderAll();
+};
+
+document.getElementById("btnExport").onclick = ()=>{
+  $io.value = JSON.stringify(store, null, 2);
+};
+
+document.getElementById("btnImport").onclick = ()=>{
+  try{
+    const incoming = JSON.parse($io.value || "{}");
+    if (!incoming || typeof incoming !== "object") throw new Error("bad");
+
+    if (!incoming.checks) incoming.checks = {};
+    if (!incoming.doneAt) incoming.doneAt = {};
+    if (!incoming.maxByMonth) incoming.maxByMonth = {};
+    incoming.schemaVersion = 3;
+
+    if (!incoming.activeMonth) incoming.activeMonth = monthKeyNow();
+    if (!incoming.activeWeek) incoming.activeWeek = 0;
+    if (!incoming.activeDay) incoming.activeDay = 1;
+
+    store = incoming;
+    saveStore(store);
+    renderAll();
+    alert("Импорт выполнен.");
+  }catch(e){
+    alert("Не удалось импортировать JSON. Проверьте содержимое поля.");
+  }
+};
+
+/* =========================
+   8) PWA: service worker
+   ВАЖНО: если у вас кэшируется старая версия — меняйте ?v=...
+========================= */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js?v=" + encodeURIComponent(APP_VERSION)).catch(()=>{});
+  });
+}
+
+renderAll();
+</script>
+</body>
+</html>
